@@ -42,7 +42,7 @@ import java.util.Random;
  * @version v1.0
  * @github https://github.com/AcmenXD
  * @date 2017/2/6 17:35
- * @detail something
+ * @detail 包含了所有集成功能,所以篇幅有点长
  */
 public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;

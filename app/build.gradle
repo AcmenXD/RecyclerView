@@ -31,7 +31,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:recyclerview-v7:25.0.0'
     /**
-     * Module
+     * RecyclerView功能集封装
      */
-    compile project(':recyclerview')
+    compile 'com.github.AcmenXD:RecyclerView:1.0'
 }

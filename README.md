@@ -28,7 +28,7 @@ compile 'com.github.AcmenXD:RecyclerView:1.0'
 - Adapter链式调用，易读、易懂、易用
 - 支持item事件：单击 & 长按 & 滑动删除 & 拖拽换位 & 侧滑菜单功能（事件无任何冲突）
 - 此封装库未对RecyclerView进行任何更改,布局或代码中使用原生RecyclerView即可
-### 使用 -> 以下代码注释很详细,很重要!!!
+### 使用 -> 以下代码 注释很详细、很重要很重要很重要!!!
 ---
 - xml布局
 ```java

@@ -1,21 +1,22 @@
 # RecyclerView
 ---
 RecyclerView功能集封装
+
 ###**依赖**
 ---
 - AndroidStudio
 ```
-	allprojects {
-			repositories {
-				...
-				maven { url 'https://jitpack.io' }
-		    }
-	}
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+    }
+}
 ```
 ```
-	 // Android系统提供的recyclerview-v7包
-	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.0'
+// Android系统提供的recyclerview-v7包
+compile 'com.android.support:recyclerview-v7:25.0.0'
+compile 'com.github.AcmenXD:RecyclerView:1.0'
 ```
 ###**功能**
 ---
@@ -71,7 +72,7 @@ rv.addItemDecoration(new LinearLayoutDecoration(this));
 // 设置增加或删除item项的动画
 rv.setItemAnimator(new DefaultItemAnimator());
 ```
-- 下拉刷新
+###**下拉刷新**
 ```java
 /**
  * 下载刷新用系统提供的SwipeRefreshLayout,并未使用PullToRefresh
@@ -96,7 +97,7 @@ srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
     }
 });
 ```
-- Adapter - 单类型Item
+###**Adapter - 单类型Item**
 ```java
 /**
  * 创建SimpleAdapter
@@ -113,7 +114,7 @@ SimpleAdapter mAdapter = new SimpleAdapter<Data>(this, rv, R.layout.activity_rec
     }
 };
 ```
-- Adapter - 多类型Item
+###**Adapter - 多类型Item**
 ```java
 /**
  * 创建MultiItemTypeAdapter
@@ -125,18 +126,18 @@ MultiItemTypeAdapter mAdapter = new MultiItemTypeAdapter<Data>(this, rv, datas);
 mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
     @Override
     public int getItemViewLayoutId() {
-	    // 此种类的item需要的布局文件
-	    return R.layout.activity_recycler_item;
+	// 此种类的item需要的布局文件
+	return R.layout.activity_recycler_item;
     }
     @Override
     public boolean isItemViewType(Data data, int dataPosition) {
-	    // 根据数据或位置判断是否用此种类型的item,返回bool类型
-	    return data.type == 1;
+	// 根据数据或位置判断是否用此种类型的item,返回bool类型
+	return data.type == 1;
     }
     @Override
     public void convert(ViewHolder viewHolder, Data data, int dataPosition) {
-	    // 刷新界面 viewHolder-控件集  item-数据  dataPosition-位置
-	    // getView(rId)是viewHolder实现的方法,此方式获取控件无需再强转类型
+	// 刷新界面 viewHolder-控件集  item-数据  dataPosition-位置
+	// getView(rId)是viewHolder实现的方法,此方式获取控件无需再强转类型
         TextView tv = viewHolder.getView(R.id.activity_recycler_item_tv);
         TextView tv_age = viewHolder.getView(R.id.activity_recycler_item_tv_age);
         TextView tv_type = viewHolder.getView(R.id.activity_recycler_item_tv_type);
@@ -166,7 +167,7 @@ mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
     }
 });
 ```
-- Adapter - 单类型+侧滑菜单的Item
+###**Adapter - 单类型+侧滑菜单的Item**
 ```java
 /**
  * 创建SimpleSwipeMenuAdapter
@@ -195,8 +196,8 @@ SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(this, rv, R.l
     }
     @Override
     public boolean onMenuItemClick(int dataPosition, int menuItemLayoutId, int direction) {
-	    // 菜单项点击回调
-	    // 函数参数:1.dataPosition列表的位置 2.menuItemLayoutId菜单项Id 3.左/右测菜单
+	// 菜单项点击回调
+	// 函数参数:1.dataPosition列表的位置 2.menuItemLayoutId菜单项Id 3.左/右测菜单
         String dirStr = "左边菜单";
         if (direction == SwipeMenuView.RIGHT_DIRECTION) {
             dirStr = "右边菜单";
@@ -221,7 +222,7 @@ SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(this, rv, R.l
     }
 };
 ```
-- Adapter - 多类型+侧滑菜单的Item
+###**Adapter - 多类型+侧滑菜单的Item**
 ```java
 /**
  * 创建MultiItemTypeSwipeMenuAdapter
@@ -248,7 +249,7 @@ mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {});
 // 添加第二种item类型(有几种类型,添加几个)
 mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {});
 ```
-- Header、Footer视图
+###**Header、Footer视图**
 ```java
 /*
  * 创建HeaderAndFooterWrapper
@@ -274,7 +275,7 @@ t4.setText("Footer 2\n\nFooter 2");
 mHeaderAndFooterWrapper.addFootView(t3);
 mHeaderAndFooterWrapper.addFootView(t4);
 ```
-- Empty视图
+###**Empty视图**
 ```java
 /*
  * 创建EmptyWrapper
@@ -291,7 +292,7 @@ EmptyWrapper mEmptyWarpper = new EmptyWrapper(rv, mHeaderAndFooterWrapper, t6, n
     }
 });
 ```
-- 上拉加载更多
+###**上拉加载更多**
 ```java
 /*
  * 创建LoadMoreWrapper
@@ -301,20 +302,20 @@ EmptyWrapper mEmptyWarpper = new EmptyWrapper(rv, mHeaderAndFooterWrapper, t6, n
 LoadMoreWrapper mLoadMoreWarpper = new LoadMoreWrapper(rv, mHeaderAndFooterWrapper, new OnLoadMoreListener() {
     @Override
     public void onLoadMore(View itemView) {
-	    // 上拉加载更多回调
+	// 上拉加载更多回调
         loadMore(itemView);
     }
 
     @Override
     public void onLoadMoreClick(View itemView) {
-	    // LoadMore单击回调
+	// LoadMore单击回调
         loadMore(itemView);
     }
 });
 // 提前2条加载下一次数据
 mLoadMoreWarpper.setRefreshBefore(2);
 ```
-- 事件监听器(单击&长按 & 滑动删除 & 拖拽变换)
+###**事件监听器(单击&长按 & 滑动删除 & 拖拽变换)**
 ```java
 /*
  * 需创建AddItemListener统一管理各个监听器,避免出现各事件冲突
@@ -324,12 +325,12 @@ mLoadMoreWarpper.setRefreshBefore(2);
 new AddItemListener(rv, new ItemCallback() {
     @Override
     public void onClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-	    // 单击回调
+	// 单击回调
         ToastUtils.show("item:" + dataPosition);
     }
     @Override
     public void onLongClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-	    //长按回调
+	//长按回调
         ToastUtils.show("longClick:" + dataPosition);
     }
 }, new ItemSwipeCallback() {
@@ -342,7 +343,7 @@ new AddItemListener(rv, new ItemCallback() {
     }
     @Override
     public boolean onDeleteCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-	    // 返回值:true表示此item项支持侧滑删除功能 false表示不支持侧滑删除
+	// 返回值:true表示此item项支持侧滑删除功能 false表示不支持侧滑删除
         if (dataPosition < 5) {
             return false;
         }
@@ -351,15 +352,15 @@ new AddItemListener(rv, new ItemCallback() {
 }, new ItemDragCallback() {
     @Override
     public boolean onTransformData(RecyclerView.ViewHolder fromViewHolder, RecyclerView.ViewHolder toViewHolder, int fromDataPosition, int toDataPosition, int fromViewPosition, int toViewPosition) {
-	    // 变换回调,需手动处理数据(变换数据位置)
+	// 变换回调,需手动处理数据(变换数据位置)
         datas.add(toDataPosition, datas.remove(fromDataPosition));
         // 返回值:true表示自动删掉并添加item视图  false表示要手动处理视图
         return true;
     }
     @Override
     public boolean onTransformCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-    // 返回值:true表示此item项支持长按拖动功能 false表示不支持长按拖动功能
-    // 此回调为起始位回调,非被换位置的item项
+        // 返回值:true表示此item项支持长按拖动功能 false表示不支持长按拖动功能
+        // 此回调为起始位回调,非被换位置的item项
         if (dataPosition < 2) {
             return false;
         }
@@ -367,7 +368,7 @@ new AddItemListener(rv, new ItemCallback() {
     }
     @Override
     public boolean onTransformToCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-    // 返回值:true表示此item项允许被换位置 false表示不允许
+        // 返回值:true表示此item项允许被换位置 false表示不允许
         if (dataPosition < 2) {
             return false;
         }

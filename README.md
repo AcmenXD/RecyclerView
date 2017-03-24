@@ -1,7 +1,7 @@
 # RecyclerView
 RecyclerView功能集封装 - 支持上拉下拉、Header、Footer、Empty、单击 & 长按 & 滑动删除 & 拖拽换位 & 侧滑菜单功能
 
-###**依赖**
+### 依赖
 ---
 - AndroidStudio
 ```
@@ -17,7 +17,7 @@ allprojects {
 compile 'com.android.support:recyclerview-v7:25.0.0'
 compile 'com.github.AcmenXD:RecyclerView:1.0'
 ```
-###**功能**
+### 功能
 ---
 - 支持下拉刷新
 - 支持LoadMore(上拉加载更多)
@@ -28,7 +28,7 @@ compile 'com.github.AcmenXD:RecyclerView:1.0'
 - Adapter链式调用，易读、易懂、易用
 - 支持item事件：单击 & 长按 & 滑动删除 & 拖拽换位 & 侧滑菜单功能（事件无任何冲突）
 - 此封装库未对RecyclerView进行任何更改,布局或代码中使用原生RecyclerView即可
-###**使用**
+### 使用
 ---
 - xml布局
 ```java
@@ -71,7 +71,7 @@ rv.addItemDecoration(new LinearLayoutDecoration(this));
 // 设置增加或删除item项的动画
 rv.setItemAnimator(new DefaultItemAnimator());
 ```
-###**下拉刷新**
+### 下拉刷新
 ```java
 /**
  * 下载刷新用系统提供的SwipeRefreshLayout,并未使用PullToRefresh
@@ -96,7 +96,7 @@ srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
     }
 });
 ```
-###**Adapter - 单类型Item**
+### Adapter - 单类型Item
 ```java
 /**
  * 创建SimpleAdapter
@@ -113,7 +113,7 @@ SimpleAdapter mAdapter = new SimpleAdapter<Data>(this, rv, R.layout.activity_rec
     }
 };
 ```
-###**Adapter - 多类型Item**
+### Adapter - 多类型Item
 ```java
 /**
  * 创建MultiItemTypeAdapter
@@ -166,7 +166,7 @@ mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
     }
 });
 ```
-###**Adapter - 单类型+侧滑菜单的Item**
+### Adapter - 单类型+侧滑菜单的Item
 ```java
 /**
  * 创建SimpleSwipeMenuAdapter
@@ -221,7 +221,7 @@ SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(this, rv, R.l
     }
 };
 ```
-###**Adapter - 多类型+侧滑菜单的Item**
+### Adapter - 多类型+侧滑菜单的Item
 ```java
 /**
  * 创建MultiItemTypeSwipeMenuAdapter
@@ -248,7 +248,7 @@ mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {});
 // 添加第二种item类型(有几种类型,添加几个)
 mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {});
 ```
-###**Header、Footer视图**
+### Header、Footer视图
 ```java
 /*
  * 创建HeaderAndFooterWrapper
@@ -274,7 +274,7 @@ t4.setText("Footer 2\n\nFooter 2");
 mHeaderAndFooterWrapper.addFootView(t3);
 mHeaderAndFooterWrapper.addFootView(t4);
 ```
-###**Empty视图**
+### Empty视图
 ```java
 /*
  * 创建EmptyWrapper
@@ -291,7 +291,7 @@ EmptyWrapper mEmptyWarpper = new EmptyWrapper(rv, mHeaderAndFooterWrapper, t6, n
     }
 });
 ```
-###**上拉加载更多**
+### 上拉加载更多
 ```java
 /*
  * 创建LoadMoreWrapper
@@ -314,7 +314,7 @@ LoadMoreWrapper mLoadMoreWarpper = new LoadMoreWrapper(rv, mHeaderAndFooterWrapp
 // 提前2条加载下一次数据
 mLoadMoreWarpper.setRefreshBefore(2);
 ```
-###**事件监听器(单击&长按 & 滑动删除 & 拖拽变换)**
+### 事件监听器(单击&长按 & 滑动删除 & 拖拽变换)
 ```java
 /*
  * 需创建AddItemListener统一管理各个监听器,避免出现各事件冲突
@@ -385,9 +385,8 @@ new AddItemListener(rv, new ItemCallback() {
     }
 });
 ```
----
-###**打个小广告^_^**
-**gitHub** : https://github.com/AcmenXD  如对您有帮助,欢迎点Star支持,谢谢~
-**技术博客** : http://blog.csdn.net/wxd_beijing
+### 打个小广告^_^
+**gitHub** : https://github.com/AcmenXD   如对您有帮助,欢迎点Star支持,谢谢~
 
+**技术博客** : http://blog.csdn.net/wxd_beijing
 # END

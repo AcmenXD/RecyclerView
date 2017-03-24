@@ -1,6 +1,5 @@
 # RecyclerView
----
-RecyclerView功能集封装
+RecyclerView功能集封装 - 支持上拉下拉、Header、Footer、Empty、单击 & 长按 & 滑动删除 & 拖拽换位 & 侧滑菜单功能
 
 ###**依赖**
 ---

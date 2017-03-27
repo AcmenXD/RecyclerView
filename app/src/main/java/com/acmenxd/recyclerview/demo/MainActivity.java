@@ -1,9 +1,9 @@
 package com.acmenxd.recyclerview.demo;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +42,7 @@ import java.util.Random;
  * @version v1.0
  * @github https://github.com/AcmenXD
  * @date 2017/2/6 17:35
- * @detail 包含了所有集成功能,所以篇幅有点长
+ * @detail 包含了所有集成功能, 所以篇幅有点长
  */
 public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;
@@ -73,10 +73,15 @@ public class MainActivity extends AppCompatActivity {
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                datas.clear();
-                addNewData();
-                refreshAdapter();
-                srl.setRefreshing(false);
+                srl.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        datas.clear();
+                        addNewData();
+                        refreshAdapter();
+                        srl.setRefreshing(false);
+                    }
+                }, 2000);
             }
         });
 
@@ -303,16 +308,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadMore(View itemView) {
-        if (mAdapter.getItemCount() >= 50) {
-            ((LoadMoreView) itemView).showFinish();
-            itemView.setEnabled(false);
-        } else {
-            ((LoadMoreView) itemView).showLoading();
-            addData();
-            refreshAdapter();
-            showToast("加载更多");
-        }
+    public void loadMore(final View itemView) {
+        rv.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mAdapter.getItemCount() >= 50) {
+                    ((LoadMoreView) itemView).showFinish();
+                    itemView.setEnabled(false);
+                } else {
+                    ((LoadMoreView) itemView).showLoading();
+                    addData();
+                    refreshAdapter();
+                    showToast("加载更多");
+                }
+            }
+        }, 2000);
+
     }
 
     public void refreshAdapter() {
@@ -326,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 吐司
      */
-    public void showToast(String str){
+    public void showToast(String str) {
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 

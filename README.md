@@ -2,7 +2,7 @@
 RecyclerView功能集封装
 
 ### 依赖
-![gif](https://github.com/AcmenXD/RecyclerView/tree/master/app/src/main/res/raw/1.gif)
+![gif](https://github.com/AcmenXD/RecyclerView/tree/master/pic/1.gif)
 ---
 - AndroidStudio
 ```

@@ -2,7 +2,7 @@
 
 RecyclerView功能集封装
 
-![mp4](https://github.com/AcmenXD/RecyclerView/blob/master/pic/1.mp4)
+![mp4](https://raw.githubusercontent.com/AcmenXD/RecyclerView/master/pic/1.mp4)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/2.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/3.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/4.gif)

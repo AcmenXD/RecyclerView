@@ -11,17 +11,17 @@ RecyclerView功能集封装
 ---
 - AndroidStudio
 ```
-allprojects {
-	repositories {
-		...
-		maven { url 'https://jitpack.io' }
-    }
-}
+	allprojects {
+            repositories {
+                ...
+                maven { url 'https://jitpack.io' }
+            }
+	}
 ```
 ```
-// Android系统提供的recyclerview-v7包
-compile 'com.android.support:recyclerview-v7:25.0.0'
-compile 'com.github.AcmenXD:RecyclerView:1.0'
+	 // Android系统提供的recyclerview-v7包
+	 compile 'com.android.support:recyclerview-v7:25.0.0'
+	 compile 'com.github.AcmenXD:RecyclerView:1.0'
 ```
 ### 功能
 ---

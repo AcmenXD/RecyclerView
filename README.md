@@ -21,7 +21,7 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.1'
+	 compile 'com.github.AcmenXD:RecyclerView:1.0'
 ```
 ### 功能
 ---

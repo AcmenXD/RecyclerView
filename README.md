@@ -2,6 +2,10 @@
 
 RecyclerView功能集封装
 
+如要了解功能实现,请运行app程序查看控制台日志和源代码!
+* 源代码 : <a href="https://github.com/AcmenXD/RecyclerView">AcmenXD/RecyclerView</a>
+* apk下载路径 : <a href="https://github.com/AcmenXD/Resource/blob/master/apks/RecyclerView.apk">RecyclerView.apk</a>
+
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/2.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/3.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/4.gif)

@@ -6,6 +6,34 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <!--<item name="android:listDivider">@drawable/divider</item>-->
+        <!--<item name="android:listDivider">@drawable/divider_bg</item>-->
     </style>
 
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+    <style name="ActivityTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/ActivityAnim</item>
+    </style>
+
+    <style name="ActivityAnim">
+        <item name="android:activityOpenEnterAnimation">@anim/right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/hold</item>
+        <item name="android:activityCloseEnterAnimation">@anim/hold</item>
+        <item name="android:activityCloseExitAnimation">@anim/right_out</item>
+        <item name="android:taskOpenEnterAnimation">@anim/right_in</item>
+        <item name="android:taskOpenExitAnimation">@anim/hold</item>
+        <item name="android:taskCloseEnterAnimation">@anim/hold</item>
+        <item name="android:taskCloseExitAnimation">@anim/right_out</item>
+        <item name="android:taskToFrontEnterAnimation">@anim/right_in</item>
+        <item name="android:taskToFrontExitAnimation">@anim/hold</item>
+        <item name="android:taskToBackEnterAnimation">@anim/hold</item>
+        <item name="android:taskToBackExitAnimation">@anim/right_out</item>
+    </style>
 </resources>

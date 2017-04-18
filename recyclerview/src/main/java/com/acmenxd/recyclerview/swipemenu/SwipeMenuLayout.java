@@ -23,8 +23,8 @@ import com.acmenxd.recyclerview.R;
 public class SwipeMenuLayout extends FrameLayout {
     private SwipeMenuViewLeft leftMenuView; // 左侧菜单栏
     private SwipeMenuViewRight rightMenuView; // 右侧菜单栏
-    private SwipeMenuView currMenuView; // 内容栏
-    private FrameLayout contentView; // 当前选中的菜单栏
+    private SwipeMenuView currMenuView; // 当前选中的菜单栏
+    private FrameLayout contentView; // 内容栏
 
     private int mScaledTouchSlop; // 手指大于此距离才移动控件
     private int mScaledMinimumFlingVelocity; // 最小滑动速率
@@ -67,6 +67,10 @@ public class SwipeMenuLayout extends FrameLayout {
         mScaledTouchSlop = mViewConfig.getScaledTouchSlop();
         mScaledMinimumFlingVelocity = mViewConfig.getScaledMinimumFlingVelocity();
         mScaledMaximumFlingVelocity = mViewConfig.getScaledMaximumFlingVelocity();
+    }
+
+    public FrameLayout getContentView() {
+        return contentView;
     }
 
     /**

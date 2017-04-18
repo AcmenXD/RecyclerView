@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.acmenxd.recyclerview.AdapterUtils;
+import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.listener.OnEmptyListener;
 

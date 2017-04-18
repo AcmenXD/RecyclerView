@@ -1,4 +1,4 @@
-package com.acmenxd.recyclerview;
+package com.acmenxd.recyclerview.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;

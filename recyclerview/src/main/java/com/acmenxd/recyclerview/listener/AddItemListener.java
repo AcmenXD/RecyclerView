@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -174,27 +175,19 @@ public class AddItemListener {
     private int[] getSwipeAndDrag(RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags) {
         if (pSwipeFlags == 0) {
             RecyclerView.LayoutManager layoutManager = pRecyclerView.getLayoutManager();
+            int orientation = 0;
             if (layoutManager instanceof StaggeredGridLayoutManager) {
-                int orientation = ((StaggeredGridLayoutManager) layoutManager).getOrientation();
-                if (orientation == StaggeredGridLayoutManager.VERTICAL) {
-                    pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
-                } else {
-                    pSwipeFlags = ItemSwipeCallback.UP_Swipe | ItemSwipeCallback.DOWN_Swipe;
-                }
+                orientation = ((StaggeredGridLayoutManager) layoutManager).getOrientation();
             } else if (layoutManager instanceof GridLayoutManager) {
-                int orientation = ((GridLayoutManager) layoutManager).getOrientation();
-                if (orientation == GridLayoutManager.VERTICAL) {
-                    pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
-                } else {
-                    pSwipeFlags = ItemSwipeCallback.UP_Swipe | ItemSwipeCallback.DOWN_Swipe;
-                }
+                orientation = ((GridLayoutManager) layoutManager).getOrientation();
+
             } else if (layoutManager instanceof LinearLayoutManager) {
-                int orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-                if (orientation == LinearLayoutManager.VERTICAL) {
-                    pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
-                } else {
-                    pSwipeFlags = ItemSwipeCallback.UP_Swipe | ItemSwipeCallback.DOWN_Swipe;
-                }
+                orientation = ((LinearLayoutManager) layoutManager).getOrientation();
+            }
+            if (orientation == OrientationHelper.VERTICAL) {
+                pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
+            } else {
+                pSwipeFlags = ItemSwipeCallback.UP_Swipe | ItemSwipeCallback.DOWN_Swipe;
             }
         }
         if (pDragFlags == 0) {
@@ -205,7 +198,7 @@ public class AddItemListener {
                 pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag | ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
             } else if (layoutManager instanceof LinearLayoutManager) {
                 int orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-                if (orientation == LinearLayoutManager.VERTICAL) {
+                if (orientation == OrientationHelper.VERTICAL) {
                     pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag;
                 } else {
                     pDragFlags = ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
@@ -311,28 +304,19 @@ public class AddItemListener {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                 float alpha = 1;
+                int orientation = 0;
                 RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
                 if (layoutManager instanceof StaggeredGridLayoutManager) {
-                    int orientation = ((StaggeredGridLayoutManager) layoutManager).getOrientation();
-                    if (orientation == StaggeredGridLayoutManager.VERTICAL) {
-                        alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
-                    } else {
-                        alpha = 1 - Math.abs(dY) / viewHolder.itemView.getHeight();
-                    }
+                    orientation = ((StaggeredGridLayoutManager) layoutManager).getOrientation();
                 } else if (layoutManager instanceof GridLayoutManager) {
-                    int orientation = ((GridLayoutManager) layoutManager).getOrientation();
-                    if (orientation == GridLayoutManager.VERTICAL) {
-                        alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
-                    } else {
-                        alpha = 1 - Math.abs(dY) / viewHolder.itemView.getHeight();
-                    }
+                    orientation = ((GridLayoutManager) layoutManager).getOrientation();
                 } else if (layoutManager instanceof LinearLayoutManager) {
-                    int orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-                    if (orientation == LinearLayoutManager.VERTICAL) {
-                        alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
-                    } else {
-                        alpha = 1 - Math.abs(dY) / viewHolder.itemView.getHeight();
-                    }
+                    orientation = ((LinearLayoutManager) layoutManager).getOrientation();
+                }
+                if (orientation == OrientationHelper.VERTICAL) {
+                    alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
+                } else {
+                    alpha = 1 - Math.abs(dY) / viewHolder.itemView.getHeight();
                 }
                 viewHolder.itemView.setAlpha(alpha);
             }

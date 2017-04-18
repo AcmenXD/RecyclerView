@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -44,9 +45,9 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void onDraw(Canvas c, RecyclerView parent) {
         int orientation = ((LinearLayoutManager) parent.getLayoutManager()).getOrientation();
-        if (orientation == LinearLayoutManager.VERTICAL) {
+        if (orientation == OrientationHelper.VERTICAL) {
             drawVertical(c, parent);
-        } else if (orientation == LinearLayoutManager.HORIZONTAL) {
+        } else if (orientation == OrientationHelper.HORIZONTAL) {
             drawHorizontal(c, parent);
         } else {
             throw new IllegalArgumentException("must be LinearLayoutManager");
@@ -90,9 +91,9 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
         int orientation = ((LinearLayoutManager) parent.getLayoutManager()).getOrientation();
-        if (orientation == LinearLayoutManager.VERTICAL) {
+        if (orientation == OrientationHelper.VERTICAL) {
             outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
-        } else if (orientation == LinearLayoutManager.HORIZONTAL) {
+        } else if (orientation == OrientationHelper.HORIZONTAL) {
             outRect.set(0, 0, mDivider.getIntrinsicWidth(), 0);
         }
     }

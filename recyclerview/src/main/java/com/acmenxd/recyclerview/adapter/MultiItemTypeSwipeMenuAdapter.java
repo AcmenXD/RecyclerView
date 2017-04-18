@@ -1,4 +1,4 @@
-package com.acmenxd.recyclerview;
+package com.acmenxd.recyclerview.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.acmenxd.recyclerview.R;
 import com.acmenxd.recyclerview.delegate.ItemDelegate;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.listener.OnSwipeMenuListener;

@@ -7,20 +7,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.acmenxd.recyclerview.AdapterUtils;
 import com.acmenxd.recyclerview.LoadMoreView;
-import com.acmenxd.recyclerview.MultiItemTypeAdapter;
-import com.acmenxd.recyclerview.MultiItemTypeSwipeMenuAdapter;
-import com.acmenxd.recyclerview.SimpleAdapter;
+import com.acmenxd.recyclerview.adapter.AdapterUtils;
+import com.acmenxd.recyclerview.adapter.MultiItemTypeAdapter;
+import com.acmenxd.recyclerview.adapter.MultiItemTypeSwipeMenuAdapter;
+import com.acmenxd.recyclerview.adapter.SimpleAdapter;
 import com.acmenxd.recyclerview.decoration.LinearLayoutDecoration;
 import com.acmenxd.recyclerview.delegate.ItemDelegate;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
+import com.acmenxd.recyclerview.group.GroupDecoration;
+import com.acmenxd.recyclerview.group.GroupHeadLayout;
+import com.acmenxd.recyclerview.group.GroupListener;
 import com.acmenxd.recyclerview.listener.AddItemListener;
 import com.acmenxd.recyclerview.listener.ItemCallback;
 import com.acmenxd.recyclerview.listener.ItemDragCallback;
@@ -45,8 +51,8 @@ import java.util.Random;
  * @detail 包含了所有集成功能, 所以篇幅有点长
  */
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView rv;
     private List<Data> datas = new ArrayList<>();
+    private RecyclerView rv;
     private SwipeRefreshLayout srl;
     private EmptyWrapper mEmptyWarpper;
     private LoadMoreWrapper mLoadMoreWarpper;
@@ -88,11 +94,60 @@ public class MainActivity extends AppCompatActivity {
         //设置布局管理器
         LinearLayoutManager manager1 = new LinearLayoutManager(this);
         GridLayoutManager manager2 = new GridLayoutManager(this, 3);
-        StaggeredGridLayoutManager manager3 = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        manager1.setOrientation(LinearLayoutManager.VERTICAL);
-        manager2.setOrientation(GridLayoutManager.VERTICAL);
-        manager3.setOrientation(StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager manager3 = new StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL);
+        manager1.setOrientation(OrientationHelper.VERTICAL);
+        manager2.setOrientation(OrientationHelper.VERTICAL);
+        manager3.setOrientation(OrientationHelper.VERTICAL);
         rv.setLayoutManager(manager1);
+        // 添加悬浮菜单
+        rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), new GroupListener() {
+            @Override
+            public int getGroupItemPosition() {
+                return GroupListener.ITEM_OUT_TOP;
+            }
+
+            @Override
+            public int getGroupItemTypeNum() {
+                return 2;
+            }
+
+            @Override
+            public int getGroupItemLevelNum() {
+                return 1;
+            }
+
+            @Override
+            public boolean isAutoSetHeadWidthHeightByGroupItemView() {
+                return false;
+            }
+
+            @Override
+            public View getGroupItemView(ViewGroup root, int dataPosition) {
+                View view = null;
+                if (dataPosition % 2 == 1) {
+                    view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
+                } else {
+                    view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                }
+                return view;
+            }
+
+            @Override
+            public void changeGroupItemView(View groupItemView, int dataPosition) {
+                TextView tv = (TextView) groupItemView.findViewById(R.id.activity_recycler_group_item_tv_number);
+                tv.setText("我是分组" + (dataPosition + 1));
+            }
+
+            @Override
+            public View getGroupHeadView(ViewGroup root, int dataPosition) {
+                return getGroupItemView(root, dataPosition);
+            }
+
+            @Override
+            public void changeGroupHeadView(View groupHeadView, int dataPosition) {
+                changeGroupItemView(groupHeadView, dataPosition);
+            }
+        }));
         //设置分隔线
         rv.addItemDecoration(new LinearLayoutDecoration(this));
 //        rv.addItemDecoration(new GridLayoutDecoration(this));

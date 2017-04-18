@@ -69,9 +69,9 @@ GridLayoutManager manager2 = new GridLayoutManager(this, 3);
 // 瀑布流布局 参数:1.设置 列/行 数  2.横/纵 向排列
 StaggeredGridLayoutManager manager3 = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 // 设置管理器的 横/纵 向排列
-manager1.setOrientation(LinearLayoutManager.VERTICAL);
-manager2.setOrientation(GridLayoutManager.VERTICAL);
-manager3.setOrientation(StaggeredGridLayoutManager.VERTICAL);
+manager1.setOrientation(OrientationHelper.VERTICAL);
+manager2.setOrientation(OrientationHelper.VERTICAL);
+manager3.setOrientation(OrientationHelper.VERTICAL);
 // 将管理器绑定到recyclerView
 rv.setLayoutManager(manager1);
 // 设置item之间的分隔线(默认提供三种分隔线,对应三种局部.如有其它需求,可自行实现)

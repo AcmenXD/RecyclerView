@@ -3,7 +3,9 @@ package com.acmenxd.recyclerview.swipemenu;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.OverScroller;
 
@@ -63,6 +65,12 @@ public abstract class SwipeMenuView extends LinearLayout {
     public void addMenuView(View menuView, int[] ids, int direction, RecyclerView pRecyclerView, final OnSwipeMenuListener pSwipeMenuListener) {
         if (menuView != null) {
             this.addView(menuView);
+            // 设置布局
+            ViewGroup.LayoutParams menuViewParams = menuView.getLayoutParams();
+            ViewGroup.LayoutParams params = this.getLayoutParams();
+            params.width = menuViewParams.width;
+            params.height = menuViewParams.height;
+            this.setLayoutParams(params);
             if (ids != null) {
                 int len = ids.length;
                 if (len > 1) {

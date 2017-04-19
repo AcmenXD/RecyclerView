@@ -51,6 +51,20 @@ public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
         viewGroup.addView(contentView);
         // 创建viewHolder
         ViewHolder viewHolder = ViewHolder.createViewHolder(mContext, swipeMenuLayout);
+        // 设置布局
+        ViewGroup.LayoutParams contentViewParams = contentView.getLayoutParams();
+        ViewGroup.LayoutParams swipeMenuLayoutParams = swipeMenuLayout.getLayoutParams();
+        ViewGroup.LayoutParams viewGroupParams = viewGroup.getLayoutParams();
+        if (contentViewParams.width == ViewGroup.LayoutParams.MATCH_PARENT || contentViewParams.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            swipeMenuLayoutParams.width = contentViewParams.width;
+            viewGroupParams.width = contentViewParams.width;
+        }
+        if (contentViewParams.height == ViewGroup.LayoutParams.MATCH_PARENT || contentViewParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            swipeMenuLayoutParams.height = contentViewParams.height;
+            viewGroupParams.height = contentViewParams.height;
+        }
+        swipeMenuLayout.setLayoutParams(swipeMenuLayoutParams);
+        viewGroup.setLayoutParams(viewGroupParams);
         return viewHolder;
     }
 

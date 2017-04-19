@@ -76,7 +76,7 @@ public class GridLayoutDecoration extends RecyclerView.ItemDecoration {
     }
 
     private void drawVertical(Canvas c, RecyclerView parent, int orientation) {
-        final int childCount = parent.getChildCount();
+        final int childCount = parent.getChildCount() - 1;
         int linePadding = getLinePadding(parent, linePaddingDip, parent.getHeight());
         for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);

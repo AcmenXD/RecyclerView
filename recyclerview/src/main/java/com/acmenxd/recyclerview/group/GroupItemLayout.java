@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
  * @date 2017/4/14 17:16
  * @detail RecyclerView -> 分组Item视图
  */
-public class GroupItemLayout extends LinearLayout {
+public class GroupItemLayout extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener {
     private View mGroupItemView;
     private int width;
     protected int height;
@@ -31,6 +31,7 @@ public class GroupItemLayout extends LinearLayout {
 
     public GroupItemLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
     protected void addGroupItemView(View view, int orientation, int groupItemPosition) {
@@ -53,7 +54,7 @@ public class GroupItemLayout extends LinearLayout {
         // 设置groupItem排列
         if (groupItemPosition == GroupListener.ITEM_OUT_TOP
                 || groupItemPosition == GroupListener.ITEM_OUT_LEFT) {
-            changeWH(orientation, groupItemPosition);
+            changeWH(orientation);
         }
     }
 
@@ -71,16 +72,12 @@ public class GroupItemLayout extends LinearLayout {
         return mGroupItemView;
     }
 
-    protected void changeWH(final int orientation, final int groupItemPosition) {
+    protected void changeWH(final int orientation) {
         final ViewGroup.LayoutParams params = getLayoutParams();
-        if (width == 0 || height == 0) {
-            width = params.width;
-            height = params.height;
-        }
         if (mGroupItemView == null) {
             params.width = width;
             params.height = height;
-            setLayoutParams(params);
+            GroupItemLayout.this.setLayoutParams(params);
         } else {
             if (listener != null) {
                 mGroupItemView.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
@@ -97,11 +94,18 @@ public class GroupItemLayout extends LinearLayout {
                         } else if (orientation == OrientationHelper.HORIZONTAL) {
                             params.width = width + mGroupItemView.getMeasuredWidth();
                         }
-                        setLayoutParams(params);
+                        GroupItemLayout.this.setLayoutParams(params);
                     }
                 }
             };
             mGroupItemView.getViewTreeObserver().addOnGlobalLayoutListener(listener);
         }
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        width = getMeasuredWidth();
+        height = getMeasuredHeight();
+        getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 }

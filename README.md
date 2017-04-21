@@ -25,10 +25,14 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.0'
+	 compile 'com.github.AcmenXD:RecyclerView:1.3'
 ```
 ### 功能
 ---
+v1.3 新增功能有:
+- 支持分组功能
+- 支持分组头布局悬浮RecyclerView顶部功能
+v1.0 支持功能如下
 - 支持下拉刷新
 - 支持LoadMore(上拉加载更多)
 - 支持添加Header、Footer、Empty(头、尾、空)视图

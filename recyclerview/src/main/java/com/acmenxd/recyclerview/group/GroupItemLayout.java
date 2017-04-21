@@ -37,17 +37,21 @@ public class GroupItemLayout extends LinearLayout {
         if (mOrientation == -1) {
             this.mOrientation = orientation;
             this.mGroupItemPosition = groupItemPosition;
+            int width = LayoutParams.WRAP_CONTENT;
+            int height = LayoutParams.WRAP_CONTENT;
             // 设置布局排列
             if (mOrientation == OrientationHelper.VERTICAL) {
                 this.setOrientation(OrientationHelper.VERTICAL);
                 if (mGroupItemPosition != GroupListener.ITEM_TOP && mGroupItemPosition != GroupListener.ITEM_OUT_TOP) {
                     mGroupItemPosition = GroupListener.ITEM_OUT_TOP;
                 }
+                width = LayoutParams.MATCH_PARENT;
             } else if (mOrientation == OrientationHelper.HORIZONTAL) {
                 this.setOrientation(OrientationHelper.HORIZONTAL);
                 if (mGroupItemPosition != GroupListener.ITEM_LEFT && mGroupItemPosition != GroupListener.ITEM_OUT_LEFT) {
                     mGroupItemPosition = GroupListener.ITEM_OUT_LEFT;
                 }
+                height = LayoutParams.MATCH_PARENT;
             }
             // 设置groupItem排列
             if (mGroupItemPosition == GroupListener.ITEM_OUT_TOP
@@ -61,6 +65,7 @@ public class GroupItemLayout extends LinearLayout {
                 setLayoutParams(params);
             }
             mGroupHeadLayout = new GroupHeadLayout(mContext);
+            mGroupHeadLayout.setLayoutParams(new LayoutParams(width, height));
             addView(mGroupHeadLayout, 0);
         }
         if (mGroupHeadLayout != null) {

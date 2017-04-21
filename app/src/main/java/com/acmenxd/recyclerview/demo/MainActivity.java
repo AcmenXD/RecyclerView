@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         manager3.setOrientation(OrientationHelper.VERTICAL);
         rv.setLayoutManager(manager1);
         // 添加悬浮菜单
-        rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), new GroupListener() {
+        GroupListener mGroupListener = new GroupListener() {
             @Override
             public int getGroupItemTypeNum() {
                 return 2;
@@ -118,8 +118,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean isCreateGroupItemView(int dataPosition) {
-                if (dataPosition % 4 == 1 || dataPosition % 6 == 1 || datas.get(dataPosition).type == 3) {
-                    return true;
+                if (datas.get(dataPosition).type == 3) {
+                    if (dataPosition % 2 == 0 || dataPosition % 2 == 1) {
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -127,10 +129,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public View getGroupItemView(ViewGroup root, int dataPosition) {
                 View view = null;
-                if (dataPosition % 4 == 1) {
-                    view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
-                } else if (dataPosition % 6 == 1 || datas.get(dataPosition).type == 3) {
-                    view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                if (datas.get(dataPosition).type == 3) {
+                    if (dataPosition % 2 == 0) {
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
+                    } else if (dataPosition % 2 == 1) {
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                    }
                 }
                 return view;
             }
@@ -150,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
             public void changeGroupHeadView(View groupHeadView, int dataPosition) {
                 changeGroupItemView(groupHeadView, dataPosition);
             }
-        }));
+        };
+        rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener));
         //设置分隔线
         rv.addItemDecoration(new LinearLayoutDecoration(this));
 //        rv.addItemDecoration(new GridLayoutDecoration(this));
@@ -326,6 +331,7 @@ public class MainActivity extends AppCompatActivity {
             public void convert(ViewHolder viewHolder, Data data, int dataPosition) {
             }
         });
+        mAdapter.setGroupListener(mGroupListener);
         // Header&Footer Adapter
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(rv, mAdapter);
         TextView t1 = new TextView(this);

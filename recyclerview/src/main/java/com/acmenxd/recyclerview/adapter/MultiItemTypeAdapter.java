@@ -1,12 +1,15 @@
 package com.acmenxd.recyclerview.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.acmenxd.recyclerview.delegate.ItemDelegate;
 import com.acmenxd.recyclerview.delegate.ItemDelegateManager;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
+import com.acmenxd.recyclerview.group.GroupListener;
+import com.acmenxd.recyclerview.wrapper.WrapperUtils;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     protected RecyclerView mRecyclerView;
     protected List<T> mDatas;
     protected ItemDelegateManager mItemDelegateManager;
+    private GroupListener mGroupListener; // 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
 
     public MultiItemTypeAdapter(Context context, RecyclerView recyclerView, List<T> datas) {
         mContext = context;
@@ -69,6 +73,52 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int dataPosition) {
         mItemDelegateManager.convert(viewHolder, mDatas.get(dataPosition), dataPosition);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        AdapterUtils.onAttachedToRecyclerView(null, recyclerView, new AdapterUtils.SpanSizeCallback() {
+            @Override
+            public int getSpanSize(GridLayoutManager layoutManager, GridLayoutManager.SpanSizeLookup oldLookup, int viewPosition) {
+                if (isGroupItemLayout(viewPosition)) {
+                    return layoutManager.getSpanCount();
+                }
+                if (oldLookup != null) {
+                    return oldLookup.getSpanSize(viewPosition);
+                }
+                return 1;
+            }
+        });
+    }
+
+    @Override
+    public void onViewAttachedToWindow(ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (isGroupItemLayout(holder.getLayoutPosition())) {
+            AdapterUtils.setFullSpan(holder);
+        }
+    }
+
+    /**
+     * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
+     */
+    public void setGroupListener(GroupListener pGroupListener) {
+        mGroupListener = pGroupListener;
+    }
+
+    /**
+     * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
+     */
+    private boolean isGroupItemLayout(int viewPosition) {
+        if (mGroupListener != null) {
+            int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
+            if (dataPosition >= 0 && dataPosition < mDatas.size()) {
+                boolean result = mGroupListener.isCreateGroupItemView(dataPosition);
+                return result;
+            }
+        }
+        return false;
     }
 
 }

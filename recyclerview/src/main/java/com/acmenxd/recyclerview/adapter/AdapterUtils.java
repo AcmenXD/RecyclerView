@@ -19,7 +19,9 @@ public class AdapterUtils {
     }
 
     public static void onAttachedToRecyclerView(RecyclerView.Adapter innerAdapter, RecyclerView recyclerView, final SpanSizeCallback callback) {
-        innerAdapter.onAttachedToRecyclerView(recyclerView);
+        if (innerAdapter != null) {
+            innerAdapter.onAttachedToRecyclerView(recyclerView);
+        }
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
             final GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;

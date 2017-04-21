@@ -52,29 +52,32 @@ public class GroupItemLayout extends LinearLayout {
             // 设置groupItem排列
             if (mGroupItemPosition == GroupListener.ITEM_OUT_TOP
                     || mGroupItemPosition == GroupListener.ITEM_OUT_LEFT) {
-                ViewGroup.LayoutParams pa = getLayoutParams();
-                pa.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                setLayoutParams(pa);
+                ViewGroup.LayoutParams params = getLayoutParams();
+                if (mOrientation == OrientationHelper.VERTICAL) {
+                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                } else if (mOrientation == OrientationHelper.HORIZONTAL) {
+                    params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                }
+                setLayoutParams(params);
             }
             mGroupHeadLayout = new GroupHeadLayout(mContext);
             addView(mGroupHeadLayout, 0);
         }
-        if(mGroupHeadLayout != null) {
+        if (mGroupHeadLayout != null) {
             mGroupHeadLayout.addGroupHeadView(view);
         }
     }
 
     protected void removeGroupItemView() {
-        if(mGroupHeadLayout != null) {
+        if (mGroupHeadLayout != null) {
             mGroupHeadLayout.removeGroupHeadView();
         }
     }
 
     protected View getGroupItemView() {
-        if(mGroupHeadLayout != null) {
+        if (mGroupHeadLayout != null) {
             return mGroupHeadLayout.getGroupHeadView();
         }
         return null;
     }
-
 }

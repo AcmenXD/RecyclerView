@@ -1,0 +1,178 @@
+package com.acmenxd.recyclerview.wrapper;
+
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.acmenxd.recyclerview.LoadMoreView;
+import com.acmenxd.recyclerview.adapter.AdapterUtils;
+import com.acmenxd.recyclerview.delegate.ViewHolder;
+import com.acmenxd.recyclerview.listener.OnLoadMoreListener;
+
+/**
+ * @author AcmenXD
+ * @version v1.0
+ * @github https://github.com/AcmenXD
+ * @date 2017/2/16 16:00
+ * @detail RecyclerView 添加 加载更多 视图
+ */
+public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int ITEM_TYPE_LOAD_MORE = WrapperUtils.ITEM_TYPE_LOAD_MORE;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mInnerAdapter;
+    private View mLoadMoreView;
+    private int mLoadMoreLayoutId;
+    private int mInvertedOrderNumber = 1;
+    private OnLoadMoreListener mOnLoadMoreListener;
+
+    public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, OnLoadMoreListener loadMoreListener) {
+        this(recyclerView, adapter, new LoadMoreView(recyclerView.getContext()), loadMoreListener);
+    }
+
+    public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, View loadMoreView, OnLoadMoreListener loadMoreListener) {
+        mRecyclerView = recyclerView;
+        mInnerAdapter = adapter;
+        if (loadMoreView == null) {
+            loadMoreView = new LoadMoreView(recyclerView.getContext());
+        }
+        mLoadMoreView = loadMoreView;
+        if (loadMoreListener != null) {
+            mOnLoadMoreListener = loadMoreListener;
+        }
+    }
+
+    public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, int loadMoreLayoutId, OnLoadMoreListener loadMoreListener) {
+        mRecyclerView = recyclerView;
+        mInnerAdapter = adapter;
+        mLoadMoreLayoutId = loadMoreLayoutId;
+        if (loadMoreListener != null) {
+            mOnLoadMoreListener = loadMoreListener;
+        }
+    }
+
+    protected RecyclerView.Adapter getNextAdapter() {
+        return mInnerAdapter;
+    }
+
+    /**
+     * 提前多少个加载下一次数据,默认剩余1个item项时加载
+     */
+    public void setRefreshBefore(int pInvertedOrderNumber) {
+        if (pInvertedOrderNumber > 1) {
+            mInvertedOrderNumber = pInvertedOrderNumber;
+        }
+    }
+
+    private boolean hasLoadMore() {
+        return mLoadMoreView != null || mLoadMoreLayoutId != 0;
+    }
+
+    private boolean isShowLoadMore(int viewPosition) {
+        return hasLoadMore() && (viewPosition == WrapperUtils.getWarpperItemCount(mRecyclerView)
+                + WrapperUtils.getDataItemCount(mRecyclerView) - 1);
+    }
+
+    /**
+     * 获取当前装饰器上 -> Footer之上的item个数
+     */
+    protected int getFooterUpItemCount_Wrapper() {
+        return 0;
+    }
+
+    /**
+     * 获取Empty之上的item个数
+     */
+    protected int getEmptyUpItemCount_Wrapper() {
+        return 0;
+    }
+
+
+    /**
+     * 获取包装器的item个数
+     */
+    protected int getWarpperItemCount_Wrapper() {
+        return hasLoadMore() ? 1 : 0;
+    }
+
+    @Override
+    public int getItemCount() {
+        return (hasLoadMore() ? 1 : 0) + mInnerAdapter.getItemCount();
+    }
+
+    @Override
+    public int getItemViewType(int viewPosition) {
+        if (isShowLoadMore(viewPosition)) {
+            return ITEM_TYPE_LOAD_MORE;
+        }
+        return mInnerAdapter.getItemViewType(
+                WrapperUtils.getFirstDataItemViewPosition(mRecyclerView, mInnerAdapter, viewPosition));
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == ITEM_TYPE_LOAD_MORE) {
+            ViewHolder viewHolder = null;
+            if (mLoadMoreView == null && mLoadMoreLayoutId != 0) {
+                mLoadMoreView = LayoutInflater.from(parent.getContext()).inflate(mLoadMoreLayoutId, parent);
+            }
+            if (mLoadMoreView != null) {
+                viewHolder = ViewHolder.createViewHolder(parent.getContext(), mLoadMoreView);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View pView) {
+                        if (mOnLoadMoreListener != null) {
+                            mOnLoadMoreListener.onLoadMoreClick(mLoadMoreView);
+                        }
+                    }
+                });
+            }
+            return viewHolder;
+        }
+        return mInnerAdapter.onCreateViewHolder(parent, viewType);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int viewPosition) {
+        if (isShowLoadMore(viewPosition)) {
+            if (mOnLoadMoreListener != null && mInvertedOrderNumber == 1) {
+                mOnLoadMoreListener.onLoadMore(mLoadMoreView);
+            }
+            return;
+        }
+        mInnerAdapter.onBindViewHolder(viewHolder,
+                WrapperUtils.getFirstDataItemViewPosition(mRecyclerView, mInnerAdapter, viewPosition));
+        if (getItemCount() > mInvertedOrderNumber && viewPosition == getItemCount() - mInvertedOrderNumber) {
+            if (mOnLoadMoreListener != null) {
+                mOnLoadMoreListener.onLoadMore(mLoadMoreView);
+            }
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        AdapterUtils.onAttachedToRecyclerView(mInnerAdapter, recyclerView, new AdapterUtils.SpanSizeCallback() {
+            @Override
+            public int getSpanSize(GridLayoutManager layoutManager, GridLayoutManager.SpanSizeLookup oldLookup, int viewPosition) {
+                if (isShowLoadMore(viewPosition)) {
+                    return layoutManager.getSpanCount();
+                }
+                if (oldLookup != null) {
+                    return oldLookup.getSpanSize(viewPosition);
+                }
+                return 1;
+            }
+        });
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
+        mInnerAdapter.onViewAttachedToWindow(viewHolder);
+        if (isShowLoadMore(viewHolder.getLayoutPosition())) {
+            AdapterUtils.setFullSpan(viewHolder);
+        }
+    }
+
+}

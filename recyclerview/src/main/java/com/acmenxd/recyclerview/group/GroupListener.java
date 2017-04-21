@@ -22,11 +22,6 @@ public interface GroupListener {
     int ITEM_OUT_LEFT = 3; //外侧左部
 
     /**
-     * 获取GroupItem的显示位置,如未按要求设置,则会自动调整
-     */
-    int getGroupItemPosition();
-
-    /**
      * 获取GroupItem类型的数量
      */
     int getGroupItemTypeNum();
@@ -39,7 +34,15 @@ public interface GroupListener {
     /**
      * 设置Head是否自动与GroupItemView宽高同步
      */
-    boolean isAutoSetHeadWidthHeightByGroupItemView();
+    boolean isAutoSetGroupHeadViewWidthHeightByGroupItemView();
+
+    /**
+     * 是否创建GroupItemView
+     *
+     * @param dataPosition 定位数据的position
+     * @return
+     */
+    boolean isCreateGroupItemView(int dataPosition);
 
     /**
      * 获取GroupItemView视图

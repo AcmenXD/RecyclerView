@@ -1,6 +1,7 @@
 package com.acmenxd.recyclerview.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,12 +56,18 @@ public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
         ViewGroup.LayoutParams contentViewParams = contentView.getLayoutParams();
         ViewGroup.LayoutParams swipeMenuLayoutParams = swipeMenuLayout.getLayoutParams();
         ViewGroup.LayoutParams viewGroupParams = viewGroup.getLayoutParams();
+
+        int orientation = AdapterUtils.getOrientation(mRecyclerView);
         if (contentViewParams.width == ViewGroup.LayoutParams.MATCH_PARENT || contentViewParams.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            swipeMenuLayoutParams.width = contentViewParams.width;
+            if (orientation == OrientationHelper.VERTICAL) {
+                swipeMenuLayoutParams.width = contentViewParams.width;
+            }
             viewGroupParams.width = contentViewParams.width;
         }
         if (contentViewParams.height == ViewGroup.LayoutParams.MATCH_PARENT || contentViewParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            swipeMenuLayoutParams.height = contentViewParams.height;
+            if (orientation == OrientationHelper.HORIZONTAL) {
+                swipeMenuLayoutParams.height = contentViewParams.height;
+            }
             viewGroupParams.height = contentViewParams.height;
         }
         swipeMenuLayout.setLayoutParams(swipeMenuLayoutParams);

@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.utils.RecyclerViewUtils;
 
 /**
@@ -41,7 +42,7 @@ public class GridLayoutDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        int orientation = ((GridLayoutManager) parent.getLayoutManager()).getOrientation();
+        int orientation = AdapterUtils.getOrientation(parent);
         drawHorizontal(c, parent, orientation);
         drawVertical(c, parent, orientation);
     }

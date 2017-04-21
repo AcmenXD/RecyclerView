@@ -16,10 +16,11 @@ import android.widget.LinearLayout;
  * @detail RecyclerView -> 分组功能head
  */
 public class GroupHeadLayout extends LinearLayout {
+    private View mGroupHeadView;
+
     private int mOffset;
     private int mLastOffset;
     private int mOrientation;
-    private View mGroupHeadView;
 
     public GroupHeadLayout(Context context) {
         this(context, null);
@@ -86,6 +87,22 @@ public class GroupHeadLayout extends LinearLayout {
         final View child = getChildAt(0);
         if (child != null) {
             return getChildAt(0).getWidth();
+        }
+        return 0;
+    }
+
+    protected int getChildTop() {
+        final View child = getChildAt(0);
+        if (child != null) {
+            return getChildAt(0).getTop();
+        }
+        return 0;
+    }
+
+    protected int getChildLeft() {
+        final View child = getChildAt(0);
+        if (child != null) {
+            return getChildAt(0).getLeft();
         }
         return 0;
     }

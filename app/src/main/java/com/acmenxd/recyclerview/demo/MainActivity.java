@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         //设置布局管理器
         LinearLayoutManager manager1 = new LinearLayoutManager(this);
-        GridLayoutManager manager2 = new GridLayoutManager(this, 3);
+        GridLayoutManager manager2 = new GridLayoutManager(this, 2);
         StaggeredGridLayoutManager manager3 = new StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL);
         manager1.setOrientation(OrientationHelper.VERTICAL);
         manager2.setOrientation(OrientationHelper.VERTICAL);
@@ -101,11 +101,6 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(manager1);
         // 添加悬浮菜单
         rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), new GroupListener() {
-            @Override
-            public int getGroupItemPosition() {
-                return GroupListener.ITEM_OUT_TOP;
-            }
-
             @Override
             public int getGroupItemTypeNum() {
                 return 2;
@@ -117,16 +112,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public boolean isAutoSetHeadWidthHeightByGroupItemView() {
+            public boolean isAutoSetGroupHeadViewWidthHeightByGroupItemView() {
+                return false;
+            }
+
+            @Override
+            public boolean isCreateGroupItemView(int dataPosition) {
+                if (dataPosition % 4 == 1 || dataPosition % 6 == 1 || datas.get(dataPosition).type == 3) {
+                    return true;
+                }
                 return false;
             }
 
             @Override
             public View getGroupItemView(ViewGroup root, int dataPosition) {
                 View view = null;
-                if (dataPosition % 2 == 1) {
+                if (dataPosition % 4 == 1) {
                     view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
-                } else {
+                } else if (dataPosition % 6 == 1 || datas.get(dataPosition).type == 3) {
                     view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
                 }
                 return view;
@@ -308,6 +311,21 @@ public class MainActivity extends AppCompatActivity {
                 tv_type.setText("类型:" + data.type);
             }
         });
+        mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
+            @Override
+            public int getItemViewLayoutId() {
+                return R.layout.activity_recycler_item3;
+            }
+
+            @Override
+            public boolean isItemViewType(Data data, int dataPosition) {
+                return data.type == 3;
+            }
+
+            @Override
+            public void convert(ViewHolder viewHolder, Data data, int dataPosition) {
+            }
+        });
         // Header&Footer Adapter
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(rv, mAdapter);
         TextView t1 = new TextView(this);
@@ -352,14 +370,14 @@ public class MainActivity extends AppCompatActivity {
     public void addData() {
         int count = datas.size();
         for (int i = count, len = count + 15; i < len; i++) {
-            datas.add(new Data("name", i + 1, randomByMinMax(1, 2)));
+            datas.add(new Data("name", i + 1, randomByMinMax(1, 3)));
         }
     }
 
     public void addNewData() {
         int count = datas.size();
         for (int i = count, len = count + 15; i < len; i++) {
-            datas.add(new Data("new name", i + 1, randomByMinMax(1, 2)));
+            datas.add(new Data("new name", i + 1, randomByMinMax(1, 3)));
         }
     }
 

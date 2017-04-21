@@ -13,6 +13,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.swipemenu.SwipeMenuLayout;
 import com.acmenxd.recyclerview.wrapper.WrapperUtils;
 
@@ -173,17 +174,8 @@ public class AddItemListener {
     }
 
     private int[] getSwipeAndDrag(RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags) {
+        int orientation = AdapterUtils.getOrientation(pRecyclerView);
         if (pSwipeFlags == 0) {
-            RecyclerView.LayoutManager layoutManager = pRecyclerView.getLayoutManager();
-            int orientation = 0;
-            if (layoutManager instanceof StaggeredGridLayoutManager) {
-                orientation = ((StaggeredGridLayoutManager) layoutManager).getOrientation();
-            } else if (layoutManager instanceof GridLayoutManager) {
-                orientation = ((GridLayoutManager) layoutManager).getOrientation();
-
-            } else if (layoutManager instanceof LinearLayoutManager) {
-                orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-            }
             if (orientation == OrientationHelper.VERTICAL) {
                 pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
             } else {
@@ -197,7 +189,6 @@ public class AddItemListener {
             } else if (layoutManager instanceof GridLayoutManager) {
                 pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag | ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
             } else if (layoutManager instanceof LinearLayoutManager) {
-                int orientation = ((LinearLayoutManager) layoutManager).getOrientation();
                 if (orientation == OrientationHelper.VERTICAL) {
                     pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag;
                 } else {
@@ -304,15 +295,7 @@ public class AddItemListener {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                 float alpha = 1;
-                int orientation = 0;
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                if (layoutManager instanceof StaggeredGridLayoutManager) {
-                    orientation = ((StaggeredGridLayoutManager) layoutManager).getOrientation();
-                } else if (layoutManager instanceof GridLayoutManager) {
-                    orientation = ((GridLayoutManager) layoutManager).getOrientation();
-                } else if (layoutManager instanceof LinearLayoutManager) {
-                    orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-                }
+                int orientation = AdapterUtils.getOrientation(recyclerView);
                 if (orientation == OrientationHelper.VERTICAL) {
                     alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
                 } else {

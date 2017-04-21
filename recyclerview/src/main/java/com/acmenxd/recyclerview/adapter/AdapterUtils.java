@@ -1,6 +1,7 @@
 package com.acmenxd.recyclerview.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.ViewGroup;
@@ -64,4 +65,20 @@ public class AdapterUtils {
             }
         }, 50);
     }
+
+    /**
+     * 获取RecyclerView是横|纵排列
+     */
+    public static int getOrientation(RecyclerView parent) {
+        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            return ((StaggeredGridLayoutManager) layoutManager).getOrientation();
+        } else if (layoutManager instanceof GridLayoutManager) {
+            return ((GridLayoutManager) layoutManager).getOrientation();
+        } else if (layoutManager instanceof LinearLayoutManager) {
+            return ((LinearLayoutManager) layoutManager).getOrientation();
+        }
+        return 0;
+    }
+
 }

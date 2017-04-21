@@ -10,6 +10,7 @@ import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.utils.RecyclerViewUtils;
 
 /**
@@ -44,7 +45,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent) {
-        int orientation = ((LinearLayoutManager) parent.getLayoutManager()).getOrientation();
+        int orientation = AdapterUtils.getOrientation(parent);
         if (orientation == OrientationHelper.VERTICAL) {
             drawVertical(c, parent);
         } else if (orientation == OrientationHelper.HORIZONTAL) {
@@ -90,7 +91,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
-        int orientation = ((LinearLayoutManager) parent.getLayoutManager()).getOrientation();
+        int orientation = AdapterUtils.getOrientation(parent);
         if (orientation == OrientationHelper.VERTICAL) {
             outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
         } else if (orientation == OrientationHelper.HORIZONTAL) {

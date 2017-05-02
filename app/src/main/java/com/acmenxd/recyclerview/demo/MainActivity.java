@@ -21,7 +21,6 @@ import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.adapter.MultiItemTypeAdapter;
 import com.acmenxd.recyclerview.adapter.MultiItemTypeSwipeMenuAdapter;
 import com.acmenxd.recyclerview.adapter.SimpleAdapter;
-import com.acmenxd.recyclerview.decoration.LinearLayoutDecoration;
 import com.acmenxd.recyclerview.delegate.ItemDelegate;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.group.GroupDecoration;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         srl.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
         srl.setProgressBackgroundColorSchemeColor(Color.YELLOW);
         srl.setSize(SwipeRefreshLayout.DEFAULT);//SwipeRefreshLayout.LARGE
-        srl.setProgressViewEndTarget(true, 200);
+        srl.setProgressViewEndTarget(true, 130);
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                         refreshAdapter();
                         srl.setRefreshing(false);
                     }
-                }, 2000);
+                }, 1500);
             }
         });
 
@@ -102,13 +101,13 @@ public class MainActivity extends AppCompatActivity {
         // 添加悬浮菜单
         GroupListener mGroupListener = new GroupListener() {
             @Override
-            public int getGroupItemTypeNum() {
-                return 2;
+            public int getGroupItemLevelNum() {
+                return 4;
             }
 
             @Override
-            public int getGroupItemLevelNum() {
-                return 1;
+            public boolean isGroupItemTypeMoreOne() {
+                return false;
             }
 
             @Override
@@ -119,45 +118,66 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean isCreateGroupItemView(int dataPosition) {
                 if (datas.get(dataPosition).type == 3) {
-                    if (dataPosition % 2 == 0 || dataPosition % 2 == 1) {
-                        return true;
-                    }
+                    return true;
                 }
                 return false;
             }
 
             @Override
-            public View getGroupItemView(ViewGroup root, int dataPosition) {
+            public View getGroupItemView(ViewGroup root, int groupLevel, int dataPosition) {
                 View view = null;
                 if (datas.get(dataPosition).type == 3) {
-                    if (dataPosition % 2 == 0) {
-                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
-                    } else if (dataPosition % 2 == 1) {
-                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                    if (dataPosition % 15 == 0) {
+                        switch (groupLevel) {
+                            case 0:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
+                                break;
+                            case 1:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                                break;
+                            case 2:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item3, root, false);
+                                break;
+                            case 3:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item4, root, false);
+                                break;
+                        }
+                    } else {
+                        switch (groupLevel) {
+                            case 1:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                                break;
+                            case 2:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item3, root, false);
+                                break;
+                            case 3:
+                                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item4, root, false);
+                                break;
+                        }
                     }
                 }
                 return view;
             }
 
             @Override
-            public void changeGroupItemView(View groupItemView, int dataPosition) {
+            public void changeGroupItemView(View groupItemView, int groupLevel, int dataPosition) {
                 TextView tv = (TextView) groupItemView.findViewById(R.id.activity_recycler_group_item_tv_number);
-                tv.setText("我是分组" + (dataPosition + 1));
+                tv.setText("dataPosition:" + dataPosition + "  groupLevel:" + groupLevel);
             }
 
             @Override
-            public View getGroupHeadView(ViewGroup root, int dataPosition) {
-                return getGroupItemView(root, dataPosition);
+            public View getGroupHeadView(ViewGroup root, int groupLevel, int dataPosition) {
+                return getGroupItemView(root, groupLevel, dataPosition);
             }
 
             @Override
-            public void changeGroupHeadView(View groupHeadView, int dataPosition) {
-                changeGroupItemView(groupHeadView, dataPosition);
+            public void changeGroupHeadView(View groupHeadView, int groupLevel, int dataPosition) {
+                changeGroupItemView(groupHeadView, groupLevel, dataPosition);
             }
         };
         rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener));
         //设置分隔线
-        rv.addItemDecoration(new LinearLayoutDecoration(this));
+//        rv.addItemDecoration(new LinearLayoutDecoration(this));
 //        rv.addItemDecoration(new GridLayoutDecoration(this));
 //        rv.addItemDecoration(new StaggeredGridLayoutDecoration(this));
         //设置增加或删除条目的动画
@@ -290,9 +310,9 @@ public class MainActivity extends AppCompatActivity {
                 TextView tv = viewHolder.getView(R.id.activity_recycler_item_tv);
                 TextView tv_age = viewHolder.getView(R.id.activity_recycler_item_tv_age);
                 TextView tv_type = viewHolder.getView(R.id.activity_recycler_item_tv_type);
-                tv.setText(data.name);
-                tv_age.setText("index:" + data.index);
-                tv_type.setText("类型:" + data.type);
+                tv.setText("数据");
+                tv_type.setText("item类型:" + data.type);
+                tv_age.setText("dataPosition:" + dataPosition);
             }
         });
         mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
@@ -311,9 +331,9 @@ public class MainActivity extends AppCompatActivity {
                 TextView tv = viewHolder.getView(R.id.activity_recycler_item_tv);
                 TextView tv_age = viewHolder.getView(R.id.activity_recycler_item_tv_age);
                 TextView tv_type = viewHolder.getView(R.id.activity_recycler_item_tv_type);
-                tv.setText(data.name);
-                tv_age.setText("index:" + data.index);
-                tv_type.setText("类型:" + data.type);
+                tv.setText("数据");
+                tv_type.setText("item类型:" + data.type);
+                tv_age.setText("dataPosition:" + dataPosition);
             }
         });
         mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
@@ -331,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
             public void convert(ViewHolder viewHolder, Data data, int dataPosition) {
             }
         });
+        // 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
         mAdapter.setGroupListener(mGroupListener);
         // Header&Footer Adapter
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(rv, mAdapter);
@@ -358,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
                 loadMore(itemView);
             }
         });
-        // 提前2条加载下一次数据
+        // 提前2条加载下一次数据,如要点击加载更多,设置为0即可
         mLoadMoreWarpper.setRefreshBefore(2);
         // 空数据 Adapter
         TextView t6 = new TextView(this);
@@ -375,34 +396,42 @@ public class MainActivity extends AppCompatActivity {
 
     public void addData() {
         int count = datas.size();
-        for (int i = count, len = count + 15; i < len; i++) {
-            datas.add(new Data("name", i + 1, randomByMinMax(1, 3)));
+        for (int i = count, len = count + 20; i < len; i++) {
+            if (i % 5 == 0) {
+                datas.add(new Data("name", 3));
+            } else {
+                datas.add(new Data("new name", randomByMinMax(1, 2)));
+            }
         }
     }
 
     public void addNewData() {
         int count = datas.size();
-        for (int i = count, len = count + 15; i < len; i++) {
-            datas.add(new Data("new name", i + 1, randomByMinMax(1, 3)));
+        for (int i = count, len = count + 20; i < len; i++) {
+            if (i % 5 == 0) {
+                datas.add(new Data("name", 3));
+            } else {
+                datas.add(new Data("new name", randomByMinMax(1, 2)));
+            }
         }
     }
 
     public void loadMore(final View itemView) {
-        rv.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mAdapter.getItemCount() >= 50) {
-                    ((LoadMoreView) itemView).showFinish();
-                    itemView.setEnabled(false);
-                } else {
-                    ((LoadMoreView) itemView).showLoading();
+        if (mAdapter.getItemCount() >= 60) {
+            ((LoadMoreView) itemView).showFinish();
+            itemView.setEnabled(false);
+        } else {
+            ((LoadMoreView) itemView).showLoading();
+            rv.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((LoadMoreView) itemView).showClick();
                     addData();
                     refreshAdapter();
                     showToast("加载更多");
                 }
-            }
-        }, 2000);
-
+            }, 1500);
+        }
     }
 
     public void refreshAdapter() {
@@ -430,12 +459,10 @@ public class MainActivity extends AppCompatActivity {
 
     class Data {
         String name;
-        int index;
         int type;
 
-        public Data(String name, int index, int type) {
+        public Data(String name, int type) {
             this.name = name;
-            this.index = index;
             this.type = type;
         }
     }

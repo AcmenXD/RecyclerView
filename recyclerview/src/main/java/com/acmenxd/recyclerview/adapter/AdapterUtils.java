@@ -49,6 +49,7 @@ public class AdapterUtils {
      * * 如RecyclerView直接刷新,必须挑用此函数刷新
      * 更新RecyclerView下的Adapters
      * 解决在Adapter.onBindViewHolder()中调用notifyDataSetChanged()崩溃的问题
+     * @param pAdapters : 传入真正设置到RecyclerView中的Adapter即可
      */
     public static void notifyDataSetChanged(final RecyclerView pRecyclerView, final RecyclerView.Adapter... pAdapters) {
         if (pAdapters == null || pAdapters.length <= 0) {

@@ -1,12 +1,16 @@
 package com.acmenxd.recyclerview.group;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.OrientationHelper;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author AcmenXD
@@ -16,11 +20,11 @@ import android.widget.LinearLayout;
  * @detail RecyclerView -> 分组功能head
  */
 public class GroupHeadLayout extends LinearLayout {
-    private View mGroupHeadView;
-
-    private int mOffset;
-    private int mLastOffset;
-    private int mOrientation;
+    protected int groupItemLevelNum = -1;
+    private int mOrientation = OrientationHelper.VERTICAL;
+    private boolean isHORIZONTAL = false;
+    private Map<Integer, View> mViews;
+    private List mResetPositions;
 
     public GroupHeadLayout(Context context) {
         this(context, null);
@@ -32,95 +36,203 @@ public class GroupHeadLayout extends LinearLayout {
 
     public GroupHeadLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mViews = new HashMap<>();
+        mResetPositions = new ArrayList();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        final View child = getChildAt(0);
-        if (child != null) {
-            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+        mOrientation = getOrientation();
+        isHORIZONTAL = mOrientation == OrientationHelper.HORIZONTAL;
+        int width = 0;
+        int height = 0;
+        for (int i = getChildCount() - 1; i >= 0; i--) {
+            final View child = getChildAt(i);
+            if (child != null) {
+                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+                final int paddingTop = getPaddingTop();
+                final int paddingLeft = getPaddingLeft();
+                int mTop = paddingTop + lp.topMargin;
+                int mLeft = paddingLeft + lp.leftMargin;
+                if (isHORIZONTAL) {
+                    mLeft = mLeft + width;
+                } else {
+                    mTop = mTop + height;
+                }
+                int mRight = child.getMeasuredWidth() + mLeft;
+                int mBottom = child.getMeasuredHeight() + mTop;
+                width = mRight;
+                height = mBottom;
+                child.layout(mLeft, mTop, mRight, mBottom);
 
-            final int paddingLeft = getPaddingLeft();
-            final int paddingTop = getPaddingTop();
-
-            int mLeft = paddingLeft + lp.leftMargin;
-            int mTop = paddingTop + lp.topMargin;
-            if (mOrientation == OrientationHelper.VERTICAL) {
-                mTop = mTop + mOffset;
-            } else if (mOrientation == OrientationHelper.HORIZONTAL) {
-                mLeft = mLeft + mOffset;
+                for (Map.Entry<Integer, View> entry : mViews.entrySet()) {
+                    if (entry.getValue() == child) {
+                        for (int j = 0; j < mResetPositions.size(); j++) {
+                            if (mResetPositions.get(j) == entry.getKey()) {
+                                int wh = isHORIZONTAL ? -child.getMeasuredWidth() : -child.getMeasuredHeight();
+                                setPositionNum(child, wh);
+                            }
+                        }
+                    }
+                }
             }
-            final int mRight = child.getMeasuredWidth() + mLeft;
-            final int mBottom = child.getMeasuredHeight() + mTop;
+        }
+        mResetPositions.clear();
+    }
 
-            child.layout(mLeft, mTop, mRight, mBottom);
+    private void setPositionNum(View child, int num) {
+        if (isHORIZONTAL) {
+            child.setX(num);
+        } else {
+            child.setY(num);
         }
     }
 
-    @Override
-    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        return p instanceof MarginLayoutParams;
+    protected void addResetPosition(int level) {
+        mResetPositions.add(level);
     }
 
-    protected void scrollChild(int offset, int orientation) {
-        if (mLastOffset != offset) {
-            mOffset = offset;
-            mOrientation = orientation;
-            if (mOrientation == OrientationHelper.VERTICAL) {
-                ViewCompat.offsetTopAndBottom(getChildAt(0), mOffset - mLastOffset);
-            } else if (mOrientation == OrientationHelper.HORIZONTAL) {
-                ViewCompat.offsetLeftAndRight(getChildAt(0), mOffset - mLastOffset);
+    protected void resetPosition(int level) {
+        if (mViews.containsKey(level)) {
+            setPositionNum(mViews.get(level), getWHByLevelSmall(level));
+        }
+    }
+
+    protected int getAllWH() {
+        int wh = 0;
+        for (int i = 0, len = getChildCount(); i < len; i++) {
+            wh += (isHORIZONTAL ? getChildAt(i).getWidth() : getChildAt(i).getHeight());
+        }
+        return wh;
+    }
+
+    protected boolean[] changePosition(int currViewTL, int maxLevel, int minLevel) {
+        int wh = 0;
+        boolean isScroll = false;
+        boolean startDelete = false;
+        boolean[] deletes = new boolean[groupItemLevelNum];
+        Arrays.fill(deletes, false);
+        for (int level = 0; level < groupItemLevelNum; level++) {
+            if (mViews.containsKey(level)) {
+                View view = mViews.get(level);
+                if (isScroll) {
+                    setPositionNum(view, 0 - (isHORIZONTAL ? view.getWidth() : view.getHeight()));
+                }
+                if (startDelete) {
+                    if (level > minLevel) {
+                        deletes[level] = true;
+                    }
+                } else {
+                    wh += (isHORIZONTAL ? view.getWidth() : view.getHeight());
+                    if (currViewTL - wh <= 0) {
+                        if (level >= maxLevel) {
+                            int scroll = getWHByLevelSmall(level) - (wh - currViewTL);
+                            setPositionNum(view, scroll);
+                            isScroll = true;
+                        }
+                        startDelete = true;
+                    }
+                }
             }
         }
-        mLastOffset = mOffset;
+        return deletes;
     }
 
-    protected int getChildHeight() {
-        final View child = getChildAt(0);
-        if (child != null) {
-            return getChildAt(0).getHeight();
+    protected boolean isCanChangePosition(int currViewTL, int level) {
+        int nowWH = getWHByLevelSmall(level);
+        if (currViewTL < nowWH) {
+            return true;
         }
-        return 0;
-    }
-
-    protected int getChildWidth() {
-        final View child = getChildAt(0);
-        if (child != null) {
-            return getChildAt(0).getWidth();
+        if (mViews.containsKey(level)) {
+            int tl = isHORIZONTAL ? mViews.get(level).getLeft() : mViews.get(level).getTop();
+            if (tl < nowWH) {
+                return true;
+            }
         }
-        return 0;
+        return false;
     }
 
-    protected int getChildTop() {
-        final View child = getChildAt(0);
-        if (child != null) {
-            return getChildAt(0).getTop();
+    protected int getWHByLevel(int level) {
+        int wh = 0;
+        for (Map.Entry<Integer, View> entry : mViews.entrySet()) {
+            if (entry.getKey() <= level) {
+                wh += (isHORIZONTAL ? entry.getValue().getWidth() : entry.getValue().getHeight());
+            }
         }
-        return 0;
+        return wh;
     }
 
-    protected int getChildLeft() {
-        final View child = getChildAt(0);
-        if (child != null) {
-            return getChildAt(0).getLeft();
+    protected int getWHByLevelSmall(int level) {
+        int wh = 0;
+        for (Map.Entry<Integer, View> entry : mViews.entrySet()) {
+            if (entry.getKey() < level) {
+                wh += (isHORIZONTAL ? entry.getValue().getWidth() : entry.getValue().getHeight());
+            }
         }
-        return 0;
+        return wh;
     }
 
-    protected void addGroupHeadView(View view) {
-        removeGroupHeadView();
-        mGroupHeadView = view;
-        this.addView(mGroupHeadView);
+    protected void removeGroupHeadViewByLevel(int level) {
+        for (int i = level; i < groupItemLevelNum; i++) {
+            if (mViews.containsKey(i)) {
+                View view = mViews.get(i);
+                mViews.remove(i);
+                this.removeView(view);
+            }
+        }
+    }
+
+    protected void removeGroupHeadViewByLevel2(int level) {
+        if (mViews.containsKey(level)) {
+            View view = mViews.get(level);
+            mViews.remove(level);
+            this.removeView(view);
+        }
+    }
+
+    protected void addGroupHeadView(View view, int level) {
+        mViews.put(level, view);
+        this.addView(view, 0);
     }
 
     protected void removeGroupHeadView() {
-        if (mGroupHeadView != null) {
-            this.removeView(mGroupHeadView);
-            mGroupHeadView = null;
-        }
+        mViews.clear();
+        this.removeAllViews();
     }
 
-    protected View getGroupHeadView() {
-        return mGroupHeadView;
+    protected View getGroupHeadView(int level) {
+        if (mViews.containsKey(level)) {
+            return mViews.get(level);
+        }
+        return null;
     }
+
+    protected boolean isHave() {
+        return mViews.size() > 0;
+    }
+
+    protected int[] getLevels() {
+        int[] levels = new int[groupItemLevelNum];
+        Arrays.fill(levels, -1);
+        for (int i = 0; i < groupItemLevelNum; i++) {
+            if (mViews.containsKey(i)) {
+                levels[i] = i;
+            }
+        }
+        return levels;
+    }
+
+    protected int getMaxLevel() {
+        for (int i = 0; i < groupItemLevelNum; i++) {
+            if (mViews.containsKey(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    protected void setGroupItemLevelNum(int groupItemLevelNum) {
+        this.groupItemLevelNum = groupItemLevelNum;
+    }
+
 }

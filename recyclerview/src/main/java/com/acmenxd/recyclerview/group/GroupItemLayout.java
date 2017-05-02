@@ -33,24 +33,27 @@ public class GroupItemLayout extends LinearLayout {
         mContext = context;
     }
 
-    protected void addGroupItemView(View view, int orientation, int groupItemPosition) {
-        if (mOrientation == -1) {
+    protected void addGroupItemView(View view, int level, int orientation, int groupItemPosition) {
+        if (mGroupHeadLayout == null) {
             this.mOrientation = orientation;
             this.mGroupItemPosition = groupItemPosition;
             int width = LayoutParams.WRAP_CONTENT;
             int height = LayoutParams.WRAP_CONTENT;
+            mGroupHeadLayout = new GroupHeadLayout(mContext);
             // 设置布局排列
             if (mOrientation == OrientationHelper.VERTICAL) {
                 this.setOrientation(OrientationHelper.VERTICAL);
                 if (mGroupItemPosition != GroupListener.ITEM_TOP && mGroupItemPosition != GroupListener.ITEM_OUT_TOP) {
                     mGroupItemPosition = GroupListener.ITEM_OUT_TOP;
                 }
+                mGroupHeadLayout.setOrientation(OrientationHelper.VERTICAL);
                 width = LayoutParams.MATCH_PARENT;
             } else if (mOrientation == OrientationHelper.HORIZONTAL) {
                 this.setOrientation(OrientationHelper.HORIZONTAL);
                 if (mGroupItemPosition != GroupListener.ITEM_LEFT && mGroupItemPosition != GroupListener.ITEM_OUT_LEFT) {
                     mGroupItemPosition = GroupListener.ITEM_OUT_LEFT;
                 }
+                mGroupHeadLayout.setOrientation(OrientationHelper.HORIZONTAL);
                 height = LayoutParams.MATCH_PARENT;
             }
             // 设置groupItem排列
@@ -64,12 +67,11 @@ public class GroupItemLayout extends LinearLayout {
                 }
                 setLayoutParams(params);
             }
-            mGroupHeadLayout = new GroupHeadLayout(mContext);
             mGroupHeadLayout.setLayoutParams(new LayoutParams(width, height));
             addView(mGroupHeadLayout, 0);
         }
         if (mGroupHeadLayout != null) {
-            mGroupHeadLayout.addGroupHeadView(view);
+            mGroupHeadLayout.addGroupHeadView(view, level);
         }
     }
 
@@ -79,10 +81,37 @@ public class GroupItemLayout extends LinearLayout {
         }
     }
 
-    protected View getGroupItemView() {
+    protected View getGroupItemView(int level) {
         if (mGroupHeadLayout != null) {
-            return mGroupHeadLayout.getGroupHeadView();
+            return mGroupHeadLayout.getGroupHeadView(level);
         }
         return null;
+    }
+
+    protected boolean isHave() {
+        if (mGroupHeadLayout != null) {
+            return mGroupHeadLayout.isHave();
+        }
+        return false;
+    }
+
+    protected int[] getLevels() {
+        if (mGroupHeadLayout != null) {
+            return mGroupHeadLayout.getLevels();
+        }
+        return new int[]{};
+    }
+
+    protected int getMaxLevel() {
+        if (mGroupHeadLayout != null) {
+            return mGroupHeadLayout.getMaxLevel();
+        }
+        return -1;
+    }
+
+    protected void setGroupItemLevelNum(int groupItemLevelNum){
+        if (mGroupHeadLayout != null) {
+            mGroupHeadLayout.setGroupItemLevelNum(groupItemLevelNum);
+        }
     }
 }

@@ -104,8 +104,10 @@ public class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolde
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View pView) {
-                    if (mOnEmptyListener != null) {
-                        mOnEmptyListener.onEmptyClick(mEmptyView);
+                    if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                        if (mOnEmptyListener != null) {
+                            mOnEmptyListener.onEmptyClick(mEmptyView);
+                        }
                     }
                 }
             });

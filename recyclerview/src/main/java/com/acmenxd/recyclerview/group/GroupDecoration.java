@@ -15,6 +15,7 @@ import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.swipemenu.SwipeMenuLayout;
 import com.acmenxd.recyclerview.wrapper.WrapperUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +30,14 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     private RecyclerView mRecyclerView;
     private GroupHeadLayout mGroupHeadLayout; // Head根布局
     private GroupListener mListener; // 回调监听
-    private Map<Integer, Boolean> checkGroups; // 存储groupItem是否带有Head
+    private Map<Integer, CheckGroupItem> checkGroups; // 存储groupItem是否带有Head
     private int direction = 1; // 1:向上  2:向下  3:向左   4:向右
+    private int orientation = OrientationHelper.VERTICAL; // 默认为垂直布局
+    private boolean isHORIZONTAL = false; // 是否是水平布局
 
-    private int currGroupHeadPosition = -1; // 记录当前显示的Head位置
-    private int groupItemTypeNum = 1; // groupItem的类型数量
+    private int[] currPositions = null; // 记录当前各层级显示Head位置
     private int groupItemLevelNum = 1; // groupItem的层级数量
+    private boolean isGroupItemTypeMoreOne = false; // groupItem的类型是否大于一种
     private int groupItemPosition = GroupListener.ITEM_OUT_TOP; // groupItem的显示位置
     private boolean isAutoSetGroupHeadViewWidthHeightByGroupItemView = false; // 是否自动配置Head的宽高,根据当前GroupItem
 
@@ -42,41 +45,28 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
         mGroupHeadLayout = pGroupHeadLayout;
         mListener = pListener;
         checkGroups = new HashMap<>();
-        groupItemTypeNum = pListener.getGroupItemTypeNum();
         groupItemLevelNum = pListener.getGroupItemLevelNum();
+        isGroupItemTypeMoreOne = pListener.isGroupItemTypeMoreOne();
         isAutoSetGroupHeadViewWidthHeightByGroupItemView = pListener.isAutoSetGroupHeadViewWidthHeightByGroupItemView();
+        // 记录当前各层级显示Head位置数据
+        currPositions = new int[groupItemLevelNum];
+        Arrays.fill(currPositions, -1);
+        // 处理GroupHeadLayout数据
+        mGroupHeadLayout.groupItemLevelNum = groupItemLevelNum;
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        int viewPosition = parent.getChildAdapterPosition(view);
-        checkGroups.put(viewPosition, false);
-        GroupItemLayout groupItemLayout = getGroupItemLayoutByView(view);
-        if (groupItemLayout != null) {
-            int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(parent);
-            if (dataPosition >= 0) {
-                boolean isCreateGroupItemView = mListener.isCreateGroupItemView(dataPosition);
-                if (isCreateGroupItemView) {
-                    View groupItemView = groupItemLayout.getGroupItemView();
-                    if (groupItemView == null || groupItemTypeNum > 1) {
-                        groupItemView = mListener.getGroupItemView(groupItemLayout, dataPosition);
-                        if (groupItemView != null) {
-                            groupItemLayout.addGroupItemView(groupItemView,AdapterUtils.getOrientation(parent),groupItemPosition);
-                        }
-                    }
-                    if (groupItemView != null) {
-                        mListener.changeGroupItemView(groupItemView, dataPosition);
-                       // groupItemLayout.checkChangeWH(AdapterUtils.getOrientation(parent), groupItemPosition);
-                        checkGroups.put(viewPosition, true);
-                    }
-                } else {
-                    groupItemLayout.removeGroupItemView();
-                }
-            }
-        }
+        orientation = AdapterUtils.getOrientation(parent);
+        isHORIZONTAL = orientation == OrientationHelper.HORIZONTAL;
         if (mRecyclerView == null) {
             mRecyclerView = parent;
+            if (isHORIZONTAL) {
+                mGroupHeadLayout.setOrientation(OrientationHelper.HORIZONTAL);
+            } else {
+                mGroupHeadLayout.setOrientation(OrientationHelper.VERTICAL);
+            }
             mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -94,149 +84,158 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
                 }
             });
         }
+        // 创建groupItem
+        int viewPosition = parent.getChildAdapterPosition(view);
+        if (checkGroups.containsKey(viewPosition)) {
+            checkGroups.get(viewPosition).isHave = false;
+        } else {
+            checkGroups.put(viewPosition, new CheckGroupItem());
+        }
+        GroupItemLayout groupItemLayout = getGroupItemLayoutByView(view);
+        if (groupItemLayout != null) {
+            int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(parent);
+            if (dataPosition >= 0) {
+                if (mListener.isCreateGroupItemView(dataPosition)) {
+                    if (!groupItemLayout.isHave() || isGroupItemTypeMoreOne || groupItemLevelNum > 1) {
+                        groupItemLayout.removeGroupItemView();
+                        for (int level = 0; level < groupItemLevelNum; level++) {
+                            View groupItemView = mListener.getGroupItemView(groupItemLayout, level, dataPosition);
+                            if (groupItemView != null) {
+                                groupItemLayout.addGroupItemView(groupItemView, level, orientation, groupItemPosition);
+                                groupItemLayout.setGroupItemLevelNum(groupItemLevelNum);
+                            }
+                        }
+                    }
+                    if (groupItemLayout.isHave()) {
+                        int[] levels = groupItemLayout.getLevels();
+                        for (int i = 0, len = levels.length; i < len; i++) {
+                            int level = levels[i];
+                            if (level >= 0) {
+                                mListener.changeGroupItemView(groupItemLayout.getGroupItemView(level), level, dataPosition);
+                            }
+                        }
+                        checkGroups.get(viewPosition).isHave = true;
+                        checkGroups.get(viewPosition).levels = levels;
+                    }
+                } else {
+                    groupItemLayout.removeGroupItemView();
+                }
+            }
+        }
     }
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
-        int firstVisiblePosition = findFirstVisiblePosition(parent);
-        int groupHeadPosition = findUpGroupHeadPosition(firstVisiblePosition);
-        boolean invisible = false;
-        if (groupHeadPosition >= 0 && firstVisiblePosition >= groupHeadPosition) {
-            boolean isChange = false;
-            int orientation = AdapterUtils.getOrientation(parent);
-            if (currGroupHeadPosition != groupHeadPosition) {
-                if (currGroupHeadPosition == -1) {
-                    isChange = true;
-                }
-                currGroupHeadPosition = groupHeadPosition;
-                int dataPosition = currGroupHeadPosition - WrapperUtils.getEmptyUpItemCount(parent);
-                View groupHeadView = mGroupHeadLayout.getGroupHeadView();
-                if (groupHeadView == null || groupItemTypeNum > 1) {
-                    groupHeadView = mListener.getGroupHeadView(mGroupHeadLayout, dataPosition);
-                    if (groupHeadView != null) {
-                        mGroupHeadLayout.addGroupHeadView(groupHeadView);
-                        if (orientation == OrientationHelper.VERTICAL) {
-                            mGroupHeadLayout.setOrientation(OrientationHelper.VERTICAL);
-                        } else if (orientation == OrientationHelper.HORIZONTAL) {
-                            mGroupHeadLayout.setOrientation(OrientationHelper.HORIZONTAL);
-                        }
-                    }
-                }
-                if (groupHeadView != null) {
-                    mListener.changeGroupHeadView(mGroupHeadLayout, dataPosition);
-                    isChange = true;
-                }
-                if (isAutoSetGroupHeadViewWidthHeightByGroupItemView && isChange) {
-                    RecyclerView.ViewHolder changeViewHolder = parent.findViewHolderForAdapterPosition(currGroupHeadPosition);
-                    if (changeViewHolder != null && changeViewHolder.itemView != null) {
-                        setGroupHeadLayoutWH(changeViewHolder.itemView, orientation);
-                    }
-                }
+        int lastPosition = -1;
+        int firstPosition = findFirstVisiblePosition(parent);
+        View currView = getCurrView(parent, mGroupHeadLayout.getAllWH(), 0);
+        int nowPosition = parent.getChildAdapterPosition(currView);
+        if (isGroupItemTypeMoreOne || groupItemLevelNum > 1) {
+            View view = findVisiblePositionAsc(firstPosition, nowPosition);
+            if (view != null) {
+                currView = view;
+                nowPosition = parent.getChildAdapterPosition(currView);
             }
-            View currView = null;
-            int offset = 0;
-            if (orientation == OrientationHelper.VERTICAL) {
-                int height = mGroupHeadLayout.getChildHeight();
-                int top = mGroupHeadLayout.getChildTop();
-                if (groupItemTypeNum <= 1) {
-                    currView = parent.findChildViewUnder(0, height);
-                } else {
-                    if (direction == 1) {
-                        currView = parent.findChildViewUnder(0, height + top);
-                    } else if (direction == 2) {
-                        int currViewY = height;
-                        int nextGroupHeadPosition = findDownGroupHeadPosition(currGroupHeadPosition, parent.getAdapter().getItemCount());
-                        if (nextGroupHeadPosition >= 0) {
-                            RecyclerView.ViewHolder nextViewHolder = parent.findViewHolderForAdapterPosition(nextGroupHeadPosition);
-                            if (nextViewHolder != null && nextViewHolder.itemView != null) {
-                                int viewT = nextViewHolder.itemView.getTop();
-                                if (viewT >= 0 && viewT <= height) {
-                                    currViewY = nextViewHolder.itemView.getTop();
-                                }
-                            }
-                        }
-                        currView = parent.findChildViewUnder(0, currViewY);
-                    }
-                }
-                if (currView != null) {
-                    int index = parent.getChildAdapterPosition(currView);
-                    int currTop = currView.getTop();
-                    if (height == 0) {
-                        invisible = true;
-                    }
-                    if ((currGroupHeadPosition == index && currTop == 0)) {
-                        invisible = true;
-                    }
-                    if (currTop > 0 && isGroupHeadLayout(parent, currView)) {
-                        offset = currTop - height;
-                    }
-                }
-            } else if (orientation == OrientationHelper.HORIZONTAL) {
-                int width = mGroupHeadLayout.getChildWidth();
-                int left = mGroupHeadLayout.getChildLeft();
-                if (groupItemTypeNum <= 1) {
-                    currView = parent.findChildViewUnder(width, 0);
-                } else {
-                    if (direction == 1) {
-                        currView = parent.findChildViewUnder(width + left, 0);
-                    } else if (direction == 2) {
-                        int currViewX = width;
-                        int nextGroupHeadPosition = findDownGroupHeadPosition(currGroupHeadPosition, parent.getAdapter().getItemCount());
-                        if (nextGroupHeadPosition >= 0) {
-                            RecyclerView.ViewHolder nextViewHolder = parent.findViewHolderForAdapterPosition(nextGroupHeadPosition);
-                            if (nextViewHolder != null && nextViewHolder.itemView != null) {
-                                int viewLeft = nextViewHolder.itemView.getLeft();
-                                if (viewLeft >= 0 && viewLeft <= width) {
-                                    currViewX = nextViewHolder.itemView.getLeft();
-                                }
-                            }
-                        }
-                        currView = parent.findChildViewUnder(currViewX, 0);
-                    }
-                }
-                if (currView != null) {
-                    int index = parent.getChildAdapterPosition(currView);
-                    int currLeft = currView.getLeft();
-                    if ((currGroupHeadPosition == index && currLeft == 0) || width == 0) {
-                        invisible = true;
-                    }
-                    if (currLeft > 0 && isGroupHeadLayout(parent, currView)) {
-                        offset = currLeft - width;
-                    }
-                }
-            }
-            if (currView != null) {
-                mGroupHeadLayout.scrollChild(offset, orientation);
-                mGroupHeadLayout.setVisibility(View.VISIBLE);
-            }
-        } else {
-            invisible = true;
         }
-        if (invisible) {
-            mGroupHeadLayout.setVisibility(View.INVISIBLE);
+        if (currView == null) {
+            return;
+        }
+        for (int level = 0; level < groupItemLevelNum; level++) {
+            int haveFirst = findUpGroupHeadPosition(firstPosition, lastPosition, level);
+            if (haveFirst < 0) {
+                currPositions[level] = -1;
+                mGroupHeadLayout.removeGroupHeadViewByLevel2(level);
+            } else {
+                int firstVisiblePosition = firstPosition;
+                int firstDownPosition = findVisiblePositionDesc(nowPosition, firstVisiblePosition);
+                if (firstDownPosition >= 0) {
+                    firstVisiblePosition = firstDownPosition;
+                }
+                boolean changePosition = false;
+                int currViewTL = currView != null ? isHORIZONTAL ? currView.getLeft() : currView.getTop() : 0;
+                int currViewTL2 = getCurrViewTop(currView, level);
+                if (nowPosition > firstVisiblePosition && isGroupHeadLayout(nowPosition)
+                        && currViewTL < mGroupHeadLayout.getWHByLevel(level)) {
+                    changePosition = true;
+                    if (mGroupHeadLayout.isCanChangePosition(currViewTL2, level)) {
+                        firstVisiblePosition = nowPosition;
+                    }
+                }
+                int groupHeadPosition = findUpGroupHeadPosition(firstVisiblePosition, lastPosition, level);
+                if (groupHeadPosition >= 0 && firstVisiblePosition >= groupHeadPosition) {
+                    lastPosition = groupHeadPosition;
+                    boolean changeWH = false;
+                    if (currPositions[level] != groupHeadPosition) {
+                        currPositions[level] = groupHeadPosition;
+                        if (currPositions[level] == -1) {
+                            changeWH = true;
+                        }
+                        int dataPosition = groupHeadPosition - WrapperUtils.getEmptyUpItemCount(parent);
+                        if (!mGroupHeadLayout.isHave() || isGroupItemTypeMoreOne || groupItemLevelNum > 1) {
+                            mGroupHeadLayout.removeGroupHeadViewByLevel(level);
+                            View groupHeadView = mListener.getGroupHeadView(mGroupHeadLayout, level, dataPosition);
+                            if (groupHeadView != null) {
+                                mGroupHeadLayout.addGroupHeadView(groupHeadView, level);
+                                if (direction == 2 || direction == 4) {
+                                    mGroupHeadLayout.addResetPosition(level);
+                                }
+                            }
+                        }
+                        if (mGroupHeadLayout.isHave()) {
+                            mListener.changeGroupHeadView(mGroupHeadLayout.getGroupHeadView(level), level, dataPosition);
+                            changeWH = true;
+                        }
+                        if (isAutoSetGroupHeadViewWidthHeightByGroupItemView && changeWH) {
+                            RecyclerView.ViewHolder changeViewHolder = parent.findViewHolderForAdapterPosition(groupHeadPosition);
+                            if (changeViewHolder != null && changeViewHolder.itemView != null) {
+                                setGroupHeadLayoutWH(changeViewHolder.itemView, level);
+                            }
+                        }
+                    }
+                    if (changePosition) {
+                        int maxLevel = getMaxLevelByViewPosition(nowPosition);
+                        int minLevel = getMinLevelByViewPosition(nowPosition);
+                        if (maxLevel >= 0 && maxLevel <= level) {
+                            boolean[] deletes = mGroupHeadLayout.changePosition(currViewTL, maxLevel, minLevel);
+                            for (int i = 0, len = deletes.length; i < len; i++) {
+                                if (deletes[i]) {
+                                    currPositions[i] = -1;
+                                    mGroupHeadLayout.removeGroupHeadViewByLevel(i);
+                                }
+                            }
+                        }
+                    } else {
+                        mGroupHeadLayout.resetPosition(level);
+                    }
+                }
+            }
         }
     }
 
-    /**
-     * 设置Head与对应的groupitem等宽 或 等高
-     */
-    private void setGroupHeadLayoutWH(View view, int orientation) {
-        GroupItemLayout groupItemLayout = getGroupItemLayoutByView(view);
-        if (groupItemLayout != null) {
-            View groupItemView = groupItemLayout.getGroupItemView();
-            if (groupItemView != null) {
-                if (orientation == OrientationHelper.VERTICAL) {
-                    ViewGroup.LayoutParams params = mGroupHeadLayout.getLayoutParams();
-                    params.width = groupItemView.getMeasuredWidth();
-                    mGroupHeadLayout.setLayoutParams(params);
-                } else if (orientation == OrientationHelper.HORIZONTAL) {
-                    ViewGroup.LayoutParams params = mGroupHeadLayout.getLayoutParams();
-                    params.height = groupItemView.getMeasuredHeight();
-                    mGroupHeadLayout.setLayoutParams(params);
+    private int getCurrViewTop(View currView, int level) {
+        if (currView != null) {
+            GroupItemLayout groupItemLayout = getGroupItemLayoutByView(currView);
+            if (groupItemLayout != null) {
+                View view = groupItemLayout.getGroupItemView(level);
+                if (view != null) {
+                    return isHORIZONTAL ? view.getLeft() + currView.getLeft() : view.getTop() + currView.getTop();
                 }
             }
+            return isHORIZONTAL ? currView.getLeft() : currView.getTop();
         }
+        return 0;
+    }
+
+    /**
+     * 获取当前Head底部的View
+     */
+    private View getCurrView(RecyclerView parent, int wh, int index) {
+        View view = isHORIZONTAL ? parent.findChildViewUnder(wh, 0) : parent.findChildViewUnder(0, wh);
+        if (view == null && index <= 100) {
+            view = getCurrView(parent, wh - 1, index++);
+        }
+        return view;
     }
 
     /**
@@ -253,6 +252,28 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
             }
         }
         return groupItemLayout;
+    }
+
+    /**
+     * 设置Head与对应的groupitem等宽 或 等高
+     */
+    private void setGroupHeadLayoutWH(View view, int level) {
+        GroupItemLayout groupItemLayout = getGroupItemLayoutByView(view);
+        if (groupItemLayout != null) {
+            View groupItemView = groupItemLayout.getGroupItemView(level);
+            View groupHeadView = mGroupHeadLayout.getGroupHeadView(level);
+            if (groupItemView != null && groupHeadView != null) {
+                if (isHORIZONTAL) {
+                    ViewGroup.LayoutParams params = groupHeadView.getLayoutParams();
+                    params.height = groupItemView.getMeasuredHeight();
+                    groupHeadView.setLayoutParams(params);
+                } else {
+                    ViewGroup.LayoutParams params = groupHeadView.getLayoutParams();
+                    params.width = groupItemView.getMeasuredWidth();
+                    groupHeadView.setLayoutParams(params);
+                }
+            }
+        }
     }
 
     /**
@@ -277,11 +298,11 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     }
 
     /**
-     * 向上寻找最近的一个Head的位置(包括参数位置)
+     * 查找nowPosition位置到当前第一个视图,有没有带GroupItemLayout的位置
      */
-    private int findUpGroupHeadPosition(int formPosition) {
-        for (int i = formPosition; i >= 0; i--) {
-            if (checkGroups.containsKey(i) && checkGroups.get(i)) {
+    public int findVisiblePositionDesc(int nowPosition, int firstVisiblePosition) {
+        for (int i = nowPosition - 1; i > firstVisiblePosition; i--) {
+            if (isGroupHeadLayout(i)) {
                 return i;
             }
         }
@@ -289,30 +310,89 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     }
 
     /**
-     * 向下寻找最近的一个Head的位置(不包括参数位置)
+     * 查找nowPosition位置到当前第一个视图,有没有带GroupItemLayout的位置
      */
-    private int findDownGroupHeadPosition(int formPosition, int count) {
-        for (int i = formPosition + 1; i < count; i++) {
-            if (checkGroups.containsKey(i) && checkGroups.get(i)) {
-                return i;
+    public View findVisiblePositionAsc(int firstVisiblePosition, int nowPosition) {
+        for (int i = firstVisiblePosition + 1; i < nowPosition; i++) {
+            if (isGroupHeadLayout(i)) {
+                RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(i);
+                if (viewHolder != null) {
+                    View view = viewHolder.itemView;
+                    GroupItemLayout groupItemLayout = getGroupItemLayoutByView(view);
+                    if (groupItemLayout != null) {
+                        boolean isTL = isHORIZONTAL ? view.getLeft() > 0 : view.getTop() > 0;
+                        if (isTL && groupItemLayout.getMaxLevel() <= mGroupHeadLayout.getMaxLevel()) {
+                            return viewHolder.itemView;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 向上寻找最近的一个Head的位置(包括参数位置)
+     */
+    private int findUpGroupHeadPosition(int formPosition, int lastPosition, int level) {
+        if (formPosition < lastPosition) {
+            formPosition = lastPosition;
+        }
+        for (int i = formPosition; i >= 0 && i >= lastPosition; i--) {
+            if (checkGroups.containsKey(i) && checkGroups.get(i).isHave) {
+                int[] levels = checkGroups.get(i).levels;
+                for (int j = 0, len = levels.length; j < len; j++) {
+                    if (levels[j] == level) {
+                        return i;
+                    }
+                }
             }
         }
         return -1;
     }
-
 
     /**
      * 检查pLayout是否带有Head
      */
-    private boolean isGroupHeadLayout(RecyclerView parent, View pLayout) {
-        final int viewPosition = parent.getChildAdapterPosition(pLayout);
-        if (viewPosition == RecyclerView.NO_POSITION) {
-            return false;
-        }
-        if (checkGroups.containsKey(viewPosition) && checkGroups.get(viewPosition)) {
+    private boolean isGroupHeadLayout(int viewPosition) {
+        if (viewPosition != RecyclerView.NO_POSITION && checkGroups.containsKey(viewPosition) && checkGroups.get(viewPosition).isHave) {
             return true;
         }
         return false;
     }
 
+    /**
+     * 根据ViewPosition找到最大Level层级
+     */
+    private int getMaxLevelByViewPosition(int viewPosition) {
+        if (checkGroups.containsKey(viewPosition) && checkGroups.get(viewPosition).isHave) {
+            int[] levels = checkGroups.get(viewPosition).levels;
+            for (int i = 0, len = levels.length; i < len; i++) {
+                if (levels[i] >= 0) {
+                    return levels[i];
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 根据ViewPosition找到最小Level层级
+     */
+    private int getMinLevelByViewPosition(int viewPosition) {
+        if (checkGroups.containsKey(viewPosition) && checkGroups.get(viewPosition).isHave) {
+            int[] levels = checkGroups.get(viewPosition).levels;
+            for (int i = levels.length - 1; i >= 0; i--) {
+                if (levels[i] >= 0) {
+                    return levels[i];
+                }
+            }
+        }
+        return -1;
+    }
+
+    class CheckGroupItem {
+        boolean isHave = false;
+        int[] levels;
+    }
 }

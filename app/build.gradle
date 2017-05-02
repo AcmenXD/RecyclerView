@@ -33,6 +33,6 @@ dependencies {
     /**
      * RecyclerView功能集封装
      */
-    compile 'com.github.AcmenXD:RecyclerView:1.3'
-    //compile project(':recyclerview')
+//    compile 'com.github.AcmenXD:RecyclerView:1.3'
+    compile project(':recyclerview')
 }

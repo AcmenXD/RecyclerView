@@ -100,18 +100,20 @@ public class AddItemListener {
                     new GestureDetector.SimpleOnGestureListener() {
                         @Override
                         public boolean onSingleTapUp(MotionEvent e) {
-                            if (mItemCallBack != null) {
-                                View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
-                                boolean isMenuOpen = false;
-                                if (child instanceof SwipeMenuLayout && (((SwipeMenuLayout) child).isMenuOpen() || ((SwipeMenuLayout) child).isLoseOnceTouch())) {
-                                    isMenuOpen = true;
-                                }
-                                if (child != null && child.isEnabled() && !isMenuOpen) {
-                                    int viewPosition = mRecyclerView.getChildAdapterPosition(child);
-                                    int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
-                                    boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
-                                    if (!isWrapper) {
-                                        mItemCallBack.onClick(mRecyclerView.getChildViewHolder(child), dataPosition);
+                            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                                if (mItemCallBack != null) {
+                                    View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+                                    boolean isMenuOpen = false;
+                                    if (child instanceof SwipeMenuLayout && (((SwipeMenuLayout) child).isMenuOpen() || ((SwipeMenuLayout) child).isLoseOnceTouch())) {
+                                        isMenuOpen = true;
+                                    }
+                                    if (child != null && child.isEnabled() && !isMenuOpen) {
+                                        int viewPosition = mRecyclerView.getChildAdapterPosition(child);
+                                        int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
+                                        boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
+                                        if (!isWrapper) {
+                                            mItemCallBack.onClick(mRecyclerView.getChildViewHolder(child), dataPosition);
+                                        }
                                     }
                                 }
                             }
@@ -120,23 +122,25 @@ public class AddItemListener {
 
                         @Override
                         public void onLongPress(MotionEvent e) {
-                            if (mItemCallBack != null && mItemCallBack.isLongEnabled()) {
-                                View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
-                                boolean isMenuOpen = false;
-                                if (child instanceof SwipeMenuLayout && (((SwipeMenuLayout) child).isMenuOpen() || ((SwipeMenuLayout) child).isLoseOnceTouch())) {
-                                    isMenuOpen = true;
-                                }
-                                if (child != null && child.isEnabled() && !isMenuOpen) {
-                                    int viewPosition = mRecyclerView.getChildAdapterPosition(child);
-                                    int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
-                                    boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
-                                    if (!isWrapper) {
-                                        mItemCallBack.onLongClick(mRecyclerView.getChildViewHolder(child), dataPosition);
+                            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                                if (mItemCallBack != null && mItemCallBack.isLongEnabled()) {
+                                    View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+                                    boolean isMenuOpen = false;
+                                    if (child instanceof SwipeMenuLayout && (((SwipeMenuLayout) child).isMenuOpen() || ((SwipeMenuLayout) child).isLoseOnceTouch())) {
+                                        isMenuOpen = true;
+                                    }
+                                    if (child != null && child.isEnabled() && !isMenuOpen) {
+                                        int viewPosition = mRecyclerView.getChildAdapterPosition(child);
+                                        int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
+                                        boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
+                                        if (!isWrapper) {
+                                            mItemCallBack.onLongClick(mRecyclerView.getChildViewHolder(child), dataPosition);
+                                        }
                                     }
                                 }
-                            }
-                            if (!mItemCallBack.isLongEnabled()) {
-                                mItemCallBack.setLongEnabled(true);
+                                if (!mItemCallBack.isLongEnabled()) {
+                                    mItemCallBack.setLongEnabled(true);
+                                }
                             }
                         }
                     });
@@ -221,24 +225,26 @@ public class AddItemListener {
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             int dragFlags = 0;
             int swipeFlags = 0;
-            View child = viewHolder.itemView;
-            if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isLoseOnceTouch()) {
+            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                View child = viewHolder.itemView;
+                if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isLoseOnceTouch()) {
 
-            } else {
-                int viewPosition = viewHolder.getAdapterPosition();
-                int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
-                boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
-                if (mDragCallBack != null) {
-                    if (mDragCallBack.onTransformCheck(viewHolder, dataPosition)) {
-                        if (!isWrapper) {
-                            dragFlags = mDragFlags;
+                } else {
+                    int viewPosition = viewHolder.getAdapterPosition();
+                    int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
+                    boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
+                    if (mDragCallBack != null) {
+                        if (mDragCallBack.onTransformCheck(viewHolder, dataPosition)) {
+                            if (!isWrapper) {
+                                dragFlags = mDragFlags;
+                            }
                         }
                     }
-                }
-                if (mSwipeCallBack != null) {
-                    if (mSwipeCallBack.onDeleteCheck(viewHolder, dataPosition)) {
-                        if (!isWrapper) {
-                            swipeFlags = mSwipeFlags;
+                    if (mSwipeCallBack != null) {
+                        if (mSwipeCallBack.onDeleteCheck(viewHolder, dataPosition)) {
+                            if (!isWrapper) {
+                                swipeFlags = mSwipeFlags;
+                            }
                         }
                     }
                 }
@@ -248,23 +254,25 @@ public class AddItemListener {
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            if (mDragCallBack != null) {
-                int dp = WrapperUtils.getEmptyUpItemCount(mRecyclerView);
-                int fromViewPosition = viewHolder.getAdapterPosition();
-                int toViewPosition = target.getAdapterPosition();
-                int fromDataPosition = fromViewPosition - dp;
-                int toDataPosition = toViewPosition - dp;
-                boolean isFromWrapper = WrapperUtils.isItemWrapper(mRecyclerView, fromViewPosition);
-                boolean isToWrapper = WrapperUtils.isItemWrapper(mRecyclerView, toViewPosition);
-                if (mDragCallBack.onTransformCheck(viewHolder, fromDataPosition)
-                        && mDragCallBack.onTransformToCheck(viewHolder, toDataPosition)) {
-                    if (!isFromWrapper && !isToWrapper) {
-                        View child = viewHolder.itemView;
-                        if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isMenuOpen()) {
-                            ((SwipeMenuLayout) child).smoothCloseMenu();
-                        }
-                        if (mDragCallBack.onTransformData(viewHolder, target, fromDataPosition, toDataPosition, fromViewPosition, toViewPosition)) {
-                            mRecyclerView.getAdapter().notifyItemMoved(fromViewPosition, toViewPosition);
+            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                if (mDragCallBack != null) {
+                    int dp = WrapperUtils.getEmptyUpItemCount(mRecyclerView);
+                    int fromViewPosition = viewHolder.getAdapterPosition();
+                    int toViewPosition = target.getAdapterPosition();
+                    int fromDataPosition = fromViewPosition - dp;
+                    int toDataPosition = toViewPosition - dp;
+                    boolean isFromWrapper = WrapperUtils.isItemWrapper(mRecyclerView, fromViewPosition);
+                    boolean isToWrapper = WrapperUtils.isItemWrapper(mRecyclerView, toViewPosition);
+                    if (mDragCallBack.onTransformCheck(viewHolder, fromDataPosition)
+                            && mDragCallBack.onTransformToCheck(viewHolder, toDataPosition)) {
+                        if (!isFromWrapper && !isToWrapper) {
+                            View child = viewHolder.itemView;
+                            if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isMenuOpen()) {
+                                ((SwipeMenuLayout) child).smoothCloseMenu();
+                            }
+                            if (mDragCallBack.onTransformData(viewHolder, target, fromDataPosition, toDataPosition, fromViewPosition, toViewPosition)) {
+                                mRecyclerView.getAdapter().notifyItemMoved(fromViewPosition, toViewPosition);
+                            }
                         }
                     }
                 }
@@ -274,17 +282,19 @@ public class AddItemListener {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            if (mSwipeCallBack != null) {
-                int viewPosition = viewHolder.getAdapterPosition();
-                int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
-                boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
-                if (!isWrapper) {
-                    View child = viewHolder.itemView;
-                    if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isMenuOpen()) {
-                        ((SwipeMenuLayout) child).smoothCloseMenu();
-                    }
-                    if (mSwipeCallBack.onDeleteData(viewHolder, dataPosition, viewPosition)) {
-                        mRecyclerView.getAdapter().notifyItemRemoved(viewPosition);
+            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                if (mSwipeCallBack != null) {
+                    int viewPosition = viewHolder.getAdapterPosition();
+                    int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
+                    boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
+                    if (!isWrapper) {
+                        View child = viewHolder.itemView;
+                        if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isMenuOpen()) {
+                            ((SwipeMenuLayout) child).smoothCloseMenu();
+                        }
+                        if (mSwipeCallBack.onDeleteData(viewHolder, dataPosition, viewPosition)) {
+                            mRecyclerView.getAdapter().notifyItemRemoved(viewPosition);
+                        }
                     }
                 }
             }
@@ -293,45 +303,51 @@ public class AddItemListener {
         @Override
         public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                float alpha = 1;
-                int orientation = AdapterUtils.getOrientation(recyclerView);
-                if (orientation == OrientationHelper.VERTICAL) {
-                    alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
-                } else {
-                    alpha = 1 - Math.abs(dY) / viewHolder.itemView.getHeight();
+            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    float alpha = 1;
+                    int orientation = AdapterUtils.getOrientation(recyclerView);
+                    if (orientation == OrientationHelper.VERTICAL) {
+                        alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
+                    } else {
+                        alpha = 1 - Math.abs(dY) / viewHolder.itemView.getHeight();
+                    }
+                    viewHolder.itemView.setAlpha(alpha);
                 }
-                viewHolder.itemView.setAlpha(alpha);
             }
         }
 
         @Override
         public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
             super.onSelectedChanged(viewHolder, actionState);
-            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                if (mItemCallback != null) {
-                    mItemCallback.setLongEnabled(false);
+            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    if (mItemCallback != null) {
+                        mItemCallback.setLongEnabled(false);
+                    }
+                    if (mDragCallBack != null) {
+                        mDragCallBack.onSelectedStart(viewHolder);
+                        isSelectedStart = true;
+                    }
+                    Log.v("AcmenXD", "item进入拖拽状态");
+                } else if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    if (mItemCallback != null) {
+                        mItemCallback.setLongEnabled(false);
+                    }
+                    Log.v("AcmenXD", "item进入滑动状态");
+                } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+                    Log.v("AcmenXD", "item无状态");
                 }
-                if (mDragCallBack != null) {
-                    mDragCallBack.onSelectedStart(viewHolder);
-                    isSelectedStart = true;
-                }
-                Log.v("AcmenXD", "item进入拖拽状态");
-            } else if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                if (mItemCallback != null) {
-                    mItemCallback.setLongEnabled(false);
-                }
-                Log.v("AcmenXD", "item进入滑动状态");
-            } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
-                Log.v("AcmenXD", "item无状态");
             }
         }
 
         @Override
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
-            if (mDragCallBack != null && isSelectedStart) {
-                mDragCallBack.onSelectedEnd(viewHolder);
+            if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                if (mDragCallBack != null && isSelectedStart) {
+                    mDragCallBack.onSelectedEnd(viewHolder);
+                }
             }
         }
     }

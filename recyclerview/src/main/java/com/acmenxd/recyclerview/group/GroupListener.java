@@ -22,14 +22,14 @@ public interface GroupListener {
     int ITEM_OUT_LEFT = 3; //外侧左部
 
     /**
-     * 获取GroupItem类型的数量
-     */
-    int getGroupItemTypeNum();
-
-    /**
      * 获取GroupItem层级的数量
      */
     int getGroupItemLevelNum();
+
+    /**
+     * 判断GroupItem的视图类型是否大于一种(当Level等级大于1时,此值不在有效)
+     */
+    boolean isGroupItemTypeMoreOne();
 
     /**
      * 设置Head是否自动与GroupItemView宽高同步
@@ -37,7 +37,7 @@ public interface GroupListener {
     boolean isAutoSetGroupHeadViewWidthHeightByGroupItemView();
 
     /**
-     * 是否创建GroupItemView
+     * 判断是否创建GroupItemView
      *
      * @param dataPosition 定位数据的position
      * @return
@@ -48,35 +48,39 @@ public interface GroupListener {
      * 获取GroupItemView视图
      *
      * @param root         容器
+     * @param groupLevel   分组层级(计数从0开始)
      * @param dataPosition 定位数据的position
      * @return
      */
-    View getGroupItemView(ViewGroup root, int dataPosition);
+    View getGroupItemView(ViewGroup root, int groupLevel, int dataPosition);
 
     /**
      * 更新GroupItemView视图
      *
      * @param groupItemView 要更新的groupItemView
+     * @param groupLevel    分组层级(计数从0开始)
      * @param dataPosition  定位数据的position
      */
-    void changeGroupItemView(View groupItemView, int dataPosition);
+    void changeGroupItemView(View groupItemView, int groupLevel, int dataPosition);
 
     /**
      * 获取GroupHeadView视图
      * * 大多数情况下与GroupItemView相同,可互相调用(保留此回调是为了当出现于GroupHeadView不同时,方便拓展)
      *
      * @param root         容器
+     * @param groupLevel   分组层级(计数从0开始)
      * @param dataPosition 定位数据的position
      * @return
      */
-    View getGroupHeadView(ViewGroup root, int dataPosition);
+    View getGroupHeadView(ViewGroup root, int groupLevel, int dataPosition);
 
     /**
      * 更新GroupHeadView视图
      * * 大多数情况下与GroupItemView相同,可互相调用(保留此回调是为了当出现于GroupHeadView不同时,方便拓展)
      *
      * @param groupHeadView 要更新的groupHeadView
+     * @param groupLevel    分组层级(计数从0开始)
      * @param dataPosition  定位数据的position
      */
-    void changeGroupHeadView(View groupHeadView, int dataPosition);
+    void changeGroupHeadView(View groupHeadView, int groupLevel, int dataPosition);
 }

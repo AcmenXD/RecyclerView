@@ -59,11 +59,10 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     /**
      * 提前多少个加载下一次数据,默认剩余1个item项时加载
+     * * 如需点击加载更多, 设置为0即可
      */
     public void setRefreshBefore(int pInvertedOrderNumber) {
-        if (pInvertedOrderNumber > 1) {
-            mInvertedOrderNumber = pInvertedOrderNumber;
-        }
+        mInvertedOrderNumber = pInvertedOrderNumber;
     }
 
     private boolean hasLoadMore() {
@@ -123,8 +122,10 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View pView) {
-                        if (mOnLoadMoreListener != null) {
-                            mOnLoadMoreListener.onLoadMoreClick(mLoadMoreView);
+                        if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                            if (mOnLoadMoreListener != null) {
+                                mOnLoadMoreListener.onLoadMoreClick(mLoadMoreView);
+                            }
                         }
                     }
                 });
@@ -144,7 +145,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         mInnerAdapter.onBindViewHolder(viewHolder,
                 WrapperUtils.getFirstDataItemViewPosition(mRecyclerView, mInnerAdapter, viewPosition));
-        if (getItemCount() > mInvertedOrderNumber && viewPosition == getItemCount() - mInvertedOrderNumber) {
+        if (mInvertedOrderNumber > 0 && getItemCount() > mInvertedOrderNumber && viewPosition == getItemCount() - mInvertedOrderNumber) {
             if (mOnLoadMoreListener != null) {
                 mOnLoadMoreListener.onLoadMore(mLoadMoreView);
             }

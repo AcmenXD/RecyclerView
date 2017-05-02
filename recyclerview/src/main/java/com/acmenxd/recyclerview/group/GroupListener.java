@@ -40,7 +40,6 @@ public interface GroupListener {
      * 判断是否创建GroupItemView
      *
      * @param dataPosition 定位数据的position
-     * @return
      */
     boolean isCreateGroupItemView(int dataPosition);
 
@@ -50,7 +49,6 @@ public interface GroupListener {
      * @param root         容器
      * @param groupLevel   分组层级(计数从0开始)
      * @param dataPosition 定位数据的position
-     * @return
      */
     View getGroupItemView(ViewGroup root, int groupLevel, int dataPosition);
 
@@ -70,7 +68,6 @@ public interface GroupListener {
      * @param root         容器
      * @param groupLevel   分组层级(计数从0开始)
      * @param dataPosition 定位数据的position
-     * @return
      */
     View getGroupHeadView(ViewGroup root, int groupLevel, int dataPosition);
 

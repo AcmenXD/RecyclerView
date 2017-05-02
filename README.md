@@ -6,6 +6,7 @@ RecyclerView功能集封装
 * 源代码 : <a href="https://github.com/AcmenXD/RecyclerView">AcmenXD/RecyclerView</a>
 * apk下载路径 : <a href="https://github.com/AcmenXD/Resource/blob/master/apks/RecyclerView.apk">RecyclerView.apk</a>
 
+![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/1.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/2.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/3.gif)
 ![gif](https://github.com/AcmenXD/RecyclerView/blob/master/pic/4.gif)
@@ -25,10 +26,15 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.3'
+	 compile 'com.github.AcmenXD:RecyclerView:1.4'
 ```
 ### 功能
 ---
+####v1.4 新增功能有:
+- 支持多层级分组功能(支持垂直|水平布局)(支持LinearLayoutManager/GridLayoutManager/StaggeredGridLayoutManager)
+- 优化item各种事件
+- 特别说明:多层级分组的GroupHeadLayout&GroupItemLayout暂不支持Margin及Padding设置,显示效果会有影响
+
 ####v1.3 新增功能有:
 - 支持分组功能
 - 支持分组头布局悬浮RecyclerView顶部功能
@@ -399,6 +405,129 @@ new AddItemListener(rv, new ItemCallback() {
         viewHolder.itemView.setBackgroundResource(0);
     }
 });
+```
+### 分组 + 悬浮
+```java
+/*
+ * 创建分组回调监听
+ */
+GroupListener mGroupListener = new GroupListener() {
+    /**
+     * 获取GroupItem层级的数量
+    */
+    @Override
+    public int getGroupItemLevelNum() {
+        return 4;
+    }
+    /**
+     * 判断GroupItem的视图类型是否大于一种(当Level等级大于1时,此值不在有效)
+     */
+    @Override
+    public boolean isGroupItemTypeMoreOne() {
+        return false;
+    }
+    /**
+     * 设置Head是否自动与GroupItemView宽高同步
+     */
+    @Override
+    public boolean isAutoSetGroupHeadViewWidthHeightByGroupItemView() {
+        return false;
+    }
+    /**
+     * 判断是否创建GroupItemView
+     * @param dataPosition 定位数据的position
+     */
+    @Override
+    public boolean isCreateGroupItemView(int dataPosition) {
+        if (datas.get(dataPosition).type == 3) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * 获取GroupItemView视图
+     * @param root         容器
+     * @param groupLevel   分组层级(计数从0开始)
+     * @param dataPosition 定位数据的position
+     */
+    @Override
+    public View getGroupItemView(ViewGroup root, int groupLevel, int dataPosition) {
+        View view = null;
+        if (datas.get(dataPosition).type == 3) {
+            if (dataPosition % 15 == 0) {
+                switch (groupLevel) {
+                    case 0:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item, root, false);
+                        break;
+                    case 1:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                        break;
+                    case 2:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item3, root, false);
+                        break;
+                    case 3:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item4, root, false);
+                        break;
+                }
+            } else {
+                switch (groupLevel) {
+                    case 1:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item2, root, false);
+                        break;
+                    case 2:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item3, root, false);
+                        break;
+                    case 3:
+                        view = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_recycler_group_item4, root, false);
+                        break;
+                }
+            }
+        }
+        return view;
+    }
+    /**
+     * 更新GroupItemView视图
+     * @param groupItemView 要更新的groupItemView
+     * @param groupLevel    分组层级(计数从0开始)
+     * @param dataPosition  定位数据的position
+     */
+    @Override
+    public void changeGroupItemView(View groupItemView, int groupLevel, int dataPosition) {
+        TextView tv = (TextView) groupItemView.findViewById(R.id.activity_recycler_group_item_tv_number);
+        tv.setText("dataPosition:" + dataPosition + "  groupLevel:" + groupLevel);
+    }
+    /**
+     * 获取GroupHeadView视图
+     * * 大多数情况下与GroupItemView相同,可互相调用(保留此回调是为了当出现于GroupHeadView不同时,方便拓展)
+     * @param root         容器
+     * @param groupLevel   分组层级(计数从0开始)
+     * @param dataPosition 定位数据的position
+     */
+    @Override
+    public View getGroupHeadView(ViewGroup root, int groupLevel, int dataPosition) {
+        return getGroupItemView(root, groupLevel, dataPosition);
+    }
+    /**
+     * 更新GroupHeadView视图
+     * * 大多数情况下与GroupItemView相同,可互相调用(保留此回调是为了当出现于GroupHeadView不同时,方便拓展)
+     * @param groupHeadView 要更新的groupHeadView
+     * @param groupLevel    分组层级(计数从0开始)
+     * @param dataPosition  定位数据的position
+     */
+    @Override
+    public void changeGroupHeadView(View groupHeadView, int groupLevel, int dataPosition) {
+        changeGroupItemView(groupHeadView, groupLevel, dataPosition);
+    }
+};
+/**
+ * 创建分组Decoration并设置布局,添加到RecyclerView中,并绑定GroupListener
+ */
+rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener));
+/**
+ * 如果RecyclerView为GridLayoutManager或StaggeredGridLayoutManager,则必须设置
+ * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
+ */
+mAdapter.setGroupListener(mGroupListener);
 ```
 ### 打个小广告^_^
 **gitHub** : https://github.com/AcmenXD   如对您有帮助,欢迎点Star支持,谢谢~

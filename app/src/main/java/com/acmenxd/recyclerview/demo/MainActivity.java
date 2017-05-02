@@ -21,6 +21,7 @@ import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.adapter.MultiItemTypeAdapter;
 import com.acmenxd.recyclerview.adapter.MultiItemTypeSwipeMenuAdapter;
 import com.acmenxd.recyclerview.adapter.SimpleAdapter;
+import com.acmenxd.recyclerview.decoration.LinearLayoutDecoration;
 import com.acmenxd.recyclerview.delegate.ItemDelegate;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.group.GroupDecoration;
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         };
         rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener));
         //设置分隔线
-//        rv.addItemDecoration(new LinearLayoutDecoration(this));
+        rv.addItemDecoration(new LinearLayoutDecoration(this));
 //        rv.addItemDecoration(new GridLayoutDecoration(this));
 //        rv.addItemDecoration(new StaggeredGridLayoutDecoration(this));
         //设置增加或删除条目的动画

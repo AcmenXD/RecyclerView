@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.acmenxd.recyclerview.demo"
-        minSdkVersion 19
+        minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -33,6 +33,6 @@ dependencies {
     /**
      * RecyclerView功能集封装
      */
-    compile 'com.github.AcmenXD:RecyclerView:1.4'
-//    compile project(':recyclerview')
+//    compile 'com.github.AcmenXD:RecyclerView:1.4'
+    compile project(':recyclerview')
 }

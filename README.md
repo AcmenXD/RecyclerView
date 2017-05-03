@@ -26,16 +26,19 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.4'
+	 compile 'com.github.AcmenXD:RecyclerView:1.5'
 ```
 ### 功能
 ---
-####v1.4 新增功能有:
+####v1.5 新增功能有:
+- 调整兼容版本,支持4.0(含)以上系统
+
+####v1.4 支持功能如下
 - 支持多层级分组功能(支持垂直|水平布局)(支持LinearLayoutManager/GridLayoutManager/StaggeredGridLayoutManager)
 - 优化item各种事件
 - 特别说明:多层级分组的GroupHeadLayout&GroupItemLayout暂不支持Margin及Padding设置,显示效果会有影响
 
-####v1.3 新增功能有:
+####v1.3 支持功能如下
 - 支持分组功能
 - 支持分组头布局悬浮RecyclerView顶部功能
 

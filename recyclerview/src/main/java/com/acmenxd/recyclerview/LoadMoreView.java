@@ -45,7 +45,6 @@ public class LoadMoreView extends LinearLayout {
         super(context, attrs, defStyleAttr);
         mContext = context;
         initView();
-        showClick();
     }
 
     @Override
@@ -106,6 +105,7 @@ public class LoadMoreView extends LinearLayout {
         finishLayout.addView(finishTV);
         this.addView(finishLayout);
 
+        showClick();
     }
 
     /**

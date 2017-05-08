@@ -1,6 +1,7 @@
 package com.acmenxd.recyclerview.wrapper;
 
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +30,18 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     private OnLoadMoreListener mOnLoadMoreListener;
 
     public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, OnLoadMoreListener loadMoreListener) {
-        this(recyclerView, adapter, new LoadMoreView(recyclerView.getContext()), loadMoreListener);
+        this(recyclerView, adapter, null, loadMoreListener);
     }
 
     public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, View loadMoreView, OnLoadMoreListener loadMoreListener) {
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
         if (loadMoreView == null) {
-            loadMoreView = new LoadMoreView(recyclerView.getContext());
+            LoadMoreView view = new LoadMoreView(recyclerView.getContext());
+            int orientation = AdapterUtils.getOrientation(mRecyclerView);
+            view.setOrientation(orientation == OrientationHelper.HORIZONTAL ? OrientationHelper.HORIZONTAL : OrientationHelper.VERTICAL);
+            view.showLoading();
+            loadMoreView = view;
         }
         mLoadMoreView = loadMoreView;
         if (loadMoreListener != null) {
@@ -63,6 +68,15 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
      */
     public void setRefreshBefore(int pInvertedOrderNumber) {
         mInvertedOrderNumber = pInvertedOrderNumber;
+        if (mLoadMoreView instanceof LoadMoreView) {
+            ((LoadMoreView) mLoadMoreView).showClick();
+        }else{
+            ((LoadMoreView) mLoadMoreView).showLoading();
+        }
+    }
+
+    public View getLoadMoreView() {
+        return mLoadMoreView;
     }
 
     private boolean hasLoadMore() {

@@ -69,9 +69,11 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void setRefreshBefore(int pInvertedOrderNumber) {
         mInvertedOrderNumber = pInvertedOrderNumber;
         if (mLoadMoreView instanceof LoadMoreView) {
-            ((LoadMoreView) mLoadMoreView).showClick();
-        }else{
-            ((LoadMoreView) mLoadMoreView).showLoading();
+            if (mInvertedOrderNumber <= 0) {
+                ((LoadMoreView) mLoadMoreView).showClick();
+            } else {
+                ((LoadMoreView) mLoadMoreView).showLoading();
+            }
         }
     }
 

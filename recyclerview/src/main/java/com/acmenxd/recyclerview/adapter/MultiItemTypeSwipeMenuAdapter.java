@@ -27,9 +27,6 @@ import java.util.List;
  * * 与滑动删除事件冲突,如用侧滑菜单,请勿添加侧滑删除功能 或者 在侧滑功能的onDeleteCheck回调中返回false
  */
 public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
-    protected Context mContext;
-    protected RecyclerView mRecyclerView;
-    protected List<T> mDatas;
     private OnSwipeMenuListener mSwipeMenuListener;
 
     public MultiItemTypeSwipeMenuAdapter(Context context, RecyclerView recyclerView, List<T> datas, OnSwipeMenuListener pSwipeMenuListener) {
@@ -97,7 +94,9 @@ public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
         if (rightIds != null && rightIds.length > 0) {
             swipeMenuView_right.addMenuView(LayoutInflater.from(swipeMenuView_right.getContext()).inflate(rightIds[0], swipeMenuView_right, false), rightIds, SwipeMenuView.RIGHT_DIRECTION, mRecyclerView, mSwipeMenuListener);
         }
-        mItemDelegateManager.convert(viewHolder, mDatas.get(dataPosition), dataPosition);
+        if (mDatas.size() > dataPosition) {
+            mItemDelegateManager.convert(viewHolder, mDatas.get(dataPosition), dataPosition);
+        }
     }
 
 }

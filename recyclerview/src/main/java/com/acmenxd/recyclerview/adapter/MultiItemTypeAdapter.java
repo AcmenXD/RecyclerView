@@ -11,6 +11,7 @@ import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.group.GroupListener;
 import com.acmenxd.recyclerview.wrapper.WrapperUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,12 +31,20 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     public MultiItemTypeAdapter(Context context, RecyclerView recyclerView, List<T> datas) {
         mContext = context;
         mRecyclerView = recyclerView;
-        mDatas = datas;
+        setDatas(datas);
         mItemDelegateManager = new ItemDelegateManager();
     }
 
     public List<T> getDatas() {
         return mDatas;
+    }
+
+    public void setDatas(List<T> pDatas) {
+        if(pDatas == null){
+            mDatas = new ArrayList<>();
+        }else {
+            mDatas = pDatas;
+        }
     }
 
     public MultiItemTypeAdapter addItemViewDelegate(ItemDelegate<T> pItemDelegate) {
@@ -72,7 +81,9 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int dataPosition) {
-        mItemDelegateManager.convert(viewHolder, mDatas.get(dataPosition), dataPosition);
+        if (mDatas.size() > dataPosition) {
+            mItemDelegateManager.convert(viewHolder, mDatas.get(dataPosition), dataPosition);
+        }
     }
 
     @Override

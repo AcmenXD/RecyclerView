@@ -397,38 +397,46 @@ public class MainActivity extends AppCompatActivity {
 
     public void addData() {
         int count = datas.size();
+        List<Data> newDatas = new ArrayList<>();
+        newDatas.addAll(datas);
         for (int i = count, len = count + 20; i < len; i++) {
             if (i % 5 == 0) {
-                datas.add(new Data("name", 3));
+                newDatas.add(new Data("name", 3));
             } else {
-                datas.add(new Data("new name", randomByMinMax(1, 2)));
+                newDatas.add(new Data("new name", randomByMinMax(1, 2)));
             }
         }
+        datas = newDatas;
     }
 
     public void addNewData() {
         int count = datas.size();
+        List<Data> newDatas = new ArrayList<>();
+        newDatas.addAll(datas);
         for (int i = count, len = count + 20; i < len; i++) {
             if (i % 5 == 0) {
-                datas.add(new Data("name", 3));
+                newDatas.add(new Data("name", 3));
             } else {
-                datas.add(new Data("new name", randomByMinMax(1, 2)));
+                newDatas.add(new Data("new name", randomByMinMax(1, 2)));
             }
         }
+        datas = newDatas;
     }
 
     public void loadMore(final View itemView) {
-        if (mAdapter.getItemCount() >= 60) {
+        if (mAdapter.getItemCount() >= 60 || mAdapter.getItemCount() <= 0) {
             ((LoadMoreView) itemView).showFinish();
             itemView.setEnabled(false);
         } else {
             ((LoadMoreView) itemView).showLoading();
+            itemView.setEnabled(false);
             rv.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ((LoadMoreView) itemView).showClick();
                     addData();
                     refreshAdapter();
+                    ((LoadMoreView) itemView).showClick();
+                    itemView.setEnabled(true);
                     showToast("加载更多");
                 }
             }, 1500);
@@ -440,6 +448,7 @@ public class MainActivity extends AppCompatActivity {
          * 在Adapter.onBindViewHolder()中调用notifyDataSetChanged()会使程序崩溃
          * mEmptyWarpper.notifyDataSetChanged();
          */
+        mAdapter.setDatas(datas);
         AdapterUtils.notifyDataSetChanged(rv, mEmptyWarpper);
     }
 

@@ -26,12 +26,13 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.6'
+	 compile 'com.github.AcmenXD:RecyclerView:1.7'
 ```
 ### 功能
 ---
-####v1.6 修复问题:
+####v1.7 修复问题:
 - Adatper无数据时,导致GroupHeadLayout计算时出现OOM问题
+- LoadMoreView初始化状态,ui显示异常问题
 
 ####v1.5 新增功能有:
 - 调整兼容版本,支持4.0(含)以上系统

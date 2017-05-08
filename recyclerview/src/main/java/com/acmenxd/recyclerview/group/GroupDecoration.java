@@ -232,8 +232,8 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
      */
     private View getCurrView(RecyclerView parent, int wh, int index) {
         View view = isHORIZONTAL ? parent.findChildViewUnder(wh, 0) : parent.findChildViewUnder(0, wh);
-        if (view == null && index <= 100) {
-            view = getCurrView(parent, wh - 1, index++);
+        if (view == null && index <= 40 && wh > 0) {
+            view = getCurrView(parent, wh - 5, ++index);
         }
         return view;
     }

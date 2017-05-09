@@ -134,12 +134,4 @@ public class LoadMoreView extends LinearLayout {
         clickLayout.setVisibility(GONE);
         finishLayout.setVisibility(VISIBLE);
     }
-
-    /**
-     * 隐藏LoadMoreView
-     */
-    public void hide() {
-        loadLayout.setVisibility(GONE);
-        finishLayout.setVisibility(GONE);
-    }
 }

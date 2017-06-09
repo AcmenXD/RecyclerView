@@ -30,6 +30,8 @@ RecyclerView功能集封装
 ```
 ### 功能
 ---
+####v2.0 整体优化
+
 ####v1.8 修复问题(修复问题较多,建议升到1.8版本使用):
 - Adatper无数据时,导致GroupHeadLayout计算时出现OOM问题
 - LoadMoreView初始化状态,ui显示异常问题

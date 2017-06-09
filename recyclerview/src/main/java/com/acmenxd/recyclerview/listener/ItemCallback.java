@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.listener;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 /**
@@ -26,14 +28,14 @@ public abstract class ItemCallback {
      *
      * @param dataPosition 定位数据的position
      */
-    public abstract void onClick(RecyclerView.ViewHolder viewHolder, int dataPosition);
+    public abstract void onClick(@NonNull RecyclerView.ViewHolder viewHolder, @IntRange(from = 0) int dataPosition);
 
     /**
      * item长按事件回调
      *
      * @param dataPosition 定位数据的position
      */
-    public void onLongClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+    public void onLongClick(@NonNull RecyclerView.ViewHolder viewHolder, @IntRange(from = 0) int dataPosition) {
     }
 }
 

@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.adapter;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +15,12 @@ import android.view.ViewGroup;
  * @date 2017/2/16 16:00
  * @detail RecyclerView -> Adapter工具类
  */
-public class AdapterUtils {
+public final class AdapterUtils {
     public interface SpanSizeCallback {
-        int getSpanSize(GridLayoutManager layoutManager, GridLayoutManager.SpanSizeLookup oldLookup, int viewPosition);
+        int getSpanSize(@NonNull GridLayoutManager layoutManager, @NonNull GridLayoutManager.SpanSizeLookup oldLookup, @IntRange(from = 0) int viewPosition);
     }
 
-    public static void onAttachedToRecyclerView(RecyclerView.Adapter innerAdapter, RecyclerView recyclerView, final SpanSizeCallback callback) {
+    public static void onAttachedToRecyclerView(@NonNull RecyclerView.Adapter innerAdapter, @NonNull RecyclerView recyclerView, @NonNull final SpanSizeCallback callback) {
         if (innerAdapter != null) {
             innerAdapter.onAttachedToRecyclerView(recyclerView);
         }
@@ -36,7 +38,7 @@ public class AdapterUtils {
         }
     }
 
-    public static void setFullSpan(RecyclerView.ViewHolder viewHolder) {
+    public static void setFullSpan(@NonNull RecyclerView.ViewHolder viewHolder) {
         ViewGroup.LayoutParams lp = viewHolder.itemView.getLayoutParams();
         if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
             StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
@@ -49,9 +51,10 @@ public class AdapterUtils {
      * * 如RecyclerView直接刷新,必须挑用此函数刷新
      * 更新RecyclerView下的Adapters
      * 解决在Adapter.onBindViewHolder()中调用notifyDataSetChanged()崩溃的问题
+     *
      * @param pAdapters : 传入真正设置到RecyclerView中的Adapter即可
      */
-    public static void notifyDataSetChanged(final RecyclerView pRecyclerView, final RecyclerView.Adapter... pAdapters) {
+    public static void notifyDataSetChanged(@NonNull final RecyclerView pRecyclerView, @NonNull final RecyclerView.Adapter... pAdapters) {
         if (pAdapters == null || pAdapters.length <= 0) {
             return;
         }
@@ -72,7 +75,7 @@ public class AdapterUtils {
     /**
      * 获取RecyclerView是横|纵排列
      */
-    public static int getOrientation(RecyclerView parent) {
+    public static int getOrientation(@NonNull RecyclerView parent) {
         RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
         if (layoutManager instanceof StaggeredGridLayoutManager) {
             return ((StaggeredGridLayoutManager) layoutManager).getOrientation();

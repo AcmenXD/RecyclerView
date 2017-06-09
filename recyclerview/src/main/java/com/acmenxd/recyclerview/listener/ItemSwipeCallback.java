@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.listener;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
@@ -53,7 +55,7 @@ public abstract class ItemSwipeCallback {
      * @param viewPosition 定位adapterPosition
      * @return true:自动更新视图  false:不自动更新视图,需手动更新
      */
-    public abstract boolean onDeleteData(RecyclerView.ViewHolder viewHolder, int dataPosition, int viewPosition);
+    public abstract boolean onDeleteData(@NonNull RecyclerView.ViewHolder viewHolder, @IntRange(from = 0) int dataPosition, @IntRange(from = 0) int viewPosition);
 
     /**
      * 如有不能删除的item项,重写此方法.
@@ -61,7 +63,7 @@ public abstract class ItemSwipeCallback {
      * @param dataPosition 定位数据的position
      * @return true->可以滑动删除 false->不可滑动删除
      */
-    public boolean onDeleteCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+    public boolean onDeleteCheck(@NonNull RecyclerView.ViewHolder viewHolder, @IntRange(from = 0) int dataPosition) {
         return true;
     }
 }

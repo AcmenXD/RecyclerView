@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.wrapper;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 /**
@@ -9,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
  * @date 2017/2/16 16:00
  * @detail RecyclerView -> 包装器工具类
  */
-public class WrapperUtils {
+public final class WrapperUtils {
     public static final int ITEM_TYPE_EMPTY = Integer.MAX_VALUE - 1;
     public static final int ITEM_TYPE_LOAD_MORE = Integer.MAX_VALUE - 2;
     public static final int ITEM_TYPE_HEADER = Integer.MAX_VALUE - 10000;
@@ -19,7 +21,7 @@ public class WrapperUtils {
      * 获取第一个真实数据itemview的位置
      * * 除去各Wrapper中顶部item的位置
      */
-    public static int getFirstDataItemViewPosition(RecyclerView pRecyclerView, RecyclerView.Adapter pAdapter, int viewPosition) {
+    public static int getFirstDataItemViewPosition(@NonNull RecyclerView pRecyclerView, @NonNull RecyclerView.Adapter pAdapter, @IntRange(from = 0) int viewPosition) {
         if (pAdapter instanceof HeaderAndFooterWrapper
                 || pAdapter instanceof EmptyWrapper
                 || pAdapter instanceof LoadMoreWrapper) {
@@ -32,7 +34,7 @@ public class WrapperUtils {
     /**
      * 根据item position判断是否是Wrapper装饰器
      */
-    public static boolean isItemWrapper(RecyclerView pRecyclerView, int viewPosition) {
+    public static boolean isItemWrapper(@NonNull RecyclerView pRecyclerView, @IntRange(from = 0) int viewPosition) {
         return isItemHeader(pRecyclerView, viewPosition)
                 || isItemFooter(pRecyclerView, viewPosition)
                 || isItemEmpty(pRecyclerView, viewPosition)
@@ -42,7 +44,7 @@ public class WrapperUtils {
     /**
      * 根据item position判断是否是Header
      */
-    public static boolean isItemHeader(RecyclerView pRecyclerView, int viewPosition) {
+    public static boolean isItemHeader(@NonNull RecyclerView pRecyclerView, @IntRange(from = 0) int viewPosition) {
         int itemViewType = pRecyclerView.getAdapter().getItemViewType(viewPosition);
         return ITEM_TYPE_HEADER <= itemViewType && itemViewType < ITEM_TYPE_LOAD_MORE;
     }
@@ -50,7 +52,7 @@ public class WrapperUtils {
     /**
      * 根据item position判断是否是Footer
      */
-    public static boolean isItemFooter(RecyclerView pRecyclerView, int viewPosition) {
+    public static boolean isItemFooter(@NonNull RecyclerView pRecyclerView, @IntRange(from = 0) int viewPosition) {
         int itemViewType = pRecyclerView.getAdapter().getItemViewType(viewPosition);
         return ITEM_TYPE_FOOTER <= itemViewType && itemViewType < ITEM_TYPE_HEADER;
     }
@@ -58,7 +60,7 @@ public class WrapperUtils {
     /**
      * 根据item position判断是否是Empty
      */
-    public static boolean isItemEmpty(RecyclerView pRecyclerView, int viewPosition) {
+    public static boolean isItemEmpty(@NonNull RecyclerView pRecyclerView, @IntRange(from = 0) int viewPosition) {
         int itemViewType = pRecyclerView.getAdapter().getItemViewType(viewPosition);
         return itemViewType == ITEM_TYPE_EMPTY;
     }
@@ -66,7 +68,7 @@ public class WrapperUtils {
     /**
      * 根据item position判断是否是LoadMore
      */
-    public static boolean isItemLoadMore(RecyclerView pRecyclerView, int viewPosition) {
+    public static boolean isItemLoadMore(@NonNull RecyclerView pRecyclerView, @IntRange(from = 0) int viewPosition) {
         int itemViewType = pRecyclerView.getAdapter().getItemViewType(viewPosition);
         return itemViewType == ITEM_TYPE_LOAD_MORE;
     }
@@ -74,11 +76,11 @@ public class WrapperUtils {
     /**
      * 获取所有装饰器上 -> Footer之上的item个数
      */
-    public static int getFooterUpItemCount(RecyclerView pRecyclerView) {
+    public static int getFooterUpItemCount(@NonNull RecyclerView pRecyclerView) {
         return getDataItemCount(pRecyclerView) + getFooterUpItemCount(pRecyclerView.getAdapter());
     }
 
-    private static int getFooterUpItemCount(RecyclerView.Adapter pAdapter) {
+    private static int getFooterUpItemCount(@NonNull RecyclerView.Adapter pAdapter) {
         int footerUpItemCount_Wrapper = 0;
         if (pAdapter instanceof HeaderAndFooterWrapper) {
             HeaderAndFooterWrapper adapter = (HeaderAndFooterWrapper) pAdapter;
@@ -99,11 +101,11 @@ public class WrapperUtils {
     /**
      * 获取所有装饰器上的Empty之上的item个数
      */
-    public static int getEmptyUpItemCount(RecyclerView pRecyclerView) {
+    public static int getEmptyUpItemCount(@NonNull RecyclerView pRecyclerView) {
         return getEmptyUpItemCount(pRecyclerView.getAdapter());
     }
 
-    private static int getEmptyUpItemCount(RecyclerView.Adapter pAdapter) {
+    private static int getEmptyUpItemCount(@NonNull RecyclerView.Adapter pAdapter) {
         int emptyUpItemCount_Wrapper = 0;
         if (pAdapter instanceof HeaderAndFooterWrapper) {
             HeaderAndFooterWrapper adapter = (HeaderAndFooterWrapper) pAdapter;
@@ -124,11 +126,11 @@ public class WrapperUtils {
     /**
      * 获取所有装饰器上的包装器的item个数
      */
-    public static int getWarpperItemCount(RecyclerView pRecyclerView) {
+    public static int getWarpperItemCount(@NonNull RecyclerView pRecyclerView) {
         return getWarpperItemCount(pRecyclerView.getAdapter());
     }
 
-    private static int getWarpperItemCount(RecyclerView.Adapter pAdapter) {
+    private static int getWarpperItemCount(@NonNull RecyclerView.Adapter pAdapter) {
         int warpperItemCount_Wrapper = 0;
         if (pAdapter instanceof HeaderAndFooterWrapper) {
             HeaderAndFooterWrapper adapter = (HeaderAndFooterWrapper) pAdapter;
@@ -150,11 +152,11 @@ public class WrapperUtils {
      * 获取真实数据的item个数
      * 除Header/Footer/LoadMore/Empty以外的item个数
      */
-    public static int getDataItemCount(RecyclerView pRecyclerView) {
+    public static int getDataItemCount(@NonNull RecyclerView pRecyclerView) {
         return getDataItemCount(pRecyclerView.getAdapter());
     }
 
-    private static int getDataItemCount(RecyclerView.Adapter pAdapter) {
+    private static int getDataItemCount(@NonNull RecyclerView.Adapter pAdapter) {
         int dataItemCount = 0;
         if (pAdapter instanceof HeaderAndFooterWrapper) {
             HeaderAndFooterWrapper adapter = (HeaderAndFooterWrapper) pAdapter;

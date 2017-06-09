@@ -1,5 +1,6 @@
 package com.acmenxd.recyclerview.listener;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -10,9 +11,9 @@ import android.view.View;
  * @detail LoadMoreWarpper 事件回调
  */
 public abstract class OnLoadMoreListener {
-    public abstract void onLoadMore(View itemView);
+    public abstract void onLoadMore(@NonNull View itemView);
 
-    public void onLoadMoreClick(View itemView) {
+    public void onLoadMoreClick(@NonNull View itemView) {
 
     }
 }

@@ -1,6 +1,8 @@
 package com.acmenxd.recyclerview.group;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.util.AttributeSet;
 import android.view.View;
@@ -19,7 +21,7 @@ import java.util.Map;
  * @date 2017/4/14 11:49
  * @detail RecyclerView -> 分组功能head
  */
-public class GroupHeadLayout extends LinearLayout {
+public final class GroupHeadLayout extends LinearLayout {
     protected int groupItemLevelNum = -1;
     private int mOrientation = OrientationHelper.VERTICAL;
     private boolean isHORIZONTAL = false;
@@ -80,7 +82,7 @@ public class GroupHeadLayout extends LinearLayout {
         mResetPositions.clear();
     }
 
-    private void setPositionNum(View child, int num) {
+    private void setPositionNum(@NonNull View child, int num) {
         if (isHORIZONTAL) {
             child.setX(num);
         } else {
@@ -88,11 +90,11 @@ public class GroupHeadLayout extends LinearLayout {
         }
     }
 
-    protected void addResetPosition(int level) {
+    protected void addResetPosition(@IntRange(from = 0) int level) {
         mResetPositions.add(level);
     }
 
-    protected void resetPosition(int level) {
+    protected void resetPosition(@IntRange(from = 0) int level) {
         if (mViews.containsKey(level)) {
             setPositionNum(mViews.get(level), getWHByLevelSmall(level));
         }
@@ -106,7 +108,7 @@ public class GroupHeadLayout extends LinearLayout {
         return wh;
     }
 
-    protected boolean[] changePosition(int currViewTL, int maxLevel, int minLevel) {
+    protected boolean[] changePosition(int currViewTL, @IntRange(from = 0) int maxLevel, @IntRange(from = 0) int minLevel) {
         int wh = 0;
         boolean isScroll = false;
         boolean startDelete = false;
@@ -138,7 +140,7 @@ public class GroupHeadLayout extends LinearLayout {
         return deletes;
     }
 
-    protected boolean isCanChangePosition(int currViewTL, int level) {
+    protected boolean isCanChangePosition(int currViewTL, @IntRange(from = 0) int level) {
         int nowWH = getWHByLevelSmall(level);
         if (currViewTL < nowWH) {
             return true;
@@ -152,7 +154,7 @@ public class GroupHeadLayout extends LinearLayout {
         return false;
     }
 
-    protected int getWHByLevel(int level) {
+    protected int getWHByLevel(@IntRange(from = 0) int level) {
         int wh = 0;
         for (Map.Entry<Integer, View> entry : mViews.entrySet()) {
             if (entry.getKey() <= level) {
@@ -162,7 +164,7 @@ public class GroupHeadLayout extends LinearLayout {
         return wh;
     }
 
-    protected int getWHByLevelSmall(int level) {
+    protected int getWHByLevelSmall(@IntRange(from = 0) int level) {
         int wh = 0;
         for (Map.Entry<Integer, View> entry : mViews.entrySet()) {
             if (entry.getKey() < level) {
@@ -172,7 +174,7 @@ public class GroupHeadLayout extends LinearLayout {
         return wh;
     }
 
-    protected void removeGroupHeadViewByLevel(int level) {
+    protected void removeGroupHeadViewByLevel(@IntRange(from = 0) int level) {
         for (int i = level; i < groupItemLevelNum; i++) {
             if (mViews.containsKey(i)) {
                 View view = mViews.get(i);
@@ -182,7 +184,7 @@ public class GroupHeadLayout extends LinearLayout {
         }
     }
 
-    protected void removeGroupHeadViewByLevel2(int level) {
+    protected void removeGroupHeadViewByLevel2(@IntRange(from = 0) int level) {
         if (mViews.containsKey(level)) {
             View view = mViews.get(level);
             mViews.remove(level);
@@ -190,7 +192,7 @@ public class GroupHeadLayout extends LinearLayout {
         }
     }
 
-    protected void addGroupHeadView(View view, int level) {
+    protected void addGroupHeadView(@NonNull View view, @IntRange(from = 0) int level) {
         mViews.put(level, view);
         this.addView(view, 0);
     }
@@ -200,7 +202,7 @@ public class GroupHeadLayout extends LinearLayout {
         this.removeAllViews();
     }
 
-    protected View getGroupHeadView(int level) {
+    protected View getGroupHeadView(@IntRange(from = 0) int level) {
         if (mViews.containsKey(level)) {
             return mViews.get(level);
         }
@@ -231,7 +233,7 @@ public class GroupHeadLayout extends LinearLayout {
         return -1;
     }
 
-    protected void setGroupItemLevelNum(int groupItemLevelNum) {
+    protected void setGroupItemLevelNum(@IntRange(from = 0) int groupItemLevelNum) {
         this.groupItemLevelNum = groupItemLevelNum;
     }
 

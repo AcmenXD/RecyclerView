@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.listener;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
@@ -55,10 +57,10 @@ public abstract class ItemDragCallback {
      * @param toViewPosition   定位adapterPosition
      * @return true:自动更新视图  false:不自动更新视图,需手动更新
      */
-    public abstract boolean onTransformData(RecyclerView.ViewHolder fromViewHolder,
-                                            RecyclerView.ViewHolder toViewHolder,
-                                            int fromDataPosition, int toDataPosition,
-                                            int fromViewPosition, int toViewPosition);
+    public abstract boolean onTransformData(@NonNull RecyclerView.ViewHolder fromViewHolder,
+                                            @NonNull RecyclerView.ViewHolder toViewHolder,
+                                            @IntRange(from = 0) int fromDataPosition, @IntRange(from = 0) int toDataPosition,
+                                            @IntRange(from = 0) int fromViewPosition, @IntRange(from = 0) int toViewPosition);
 
     /**
      * 如有不能拖动的item项,重写此方法.
@@ -66,7 +68,7 @@ public abstract class ItemDragCallback {
      * @param dataPosition 定位数据的position
      * @return true->可以拖动 false->不可拖动
      */
-    public boolean onTransformCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+    public boolean onTransformCheck(@NonNull RecyclerView.ViewHolder viewHolder, @IntRange(from = 0) int dataPosition) {
         return true;
     }
 
@@ -76,20 +78,20 @@ public abstract class ItemDragCallback {
      * @param dataPosition 定位数据的position
      * @return true->可以拖动"到" false->不可拖动"到"
      */
-    public boolean onTransformToCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+    public boolean onTransformToCheck(@NonNull RecyclerView.ViewHolder viewHolder, @IntRange(from = 0) int dataPosition) {
         return true;
     }
 
     /**
      * 当item开始拖动的时候回调
      */
-    public void onSelectedStart(RecyclerView.ViewHolder viewHolder) {
+    public void onSelectedStart(@NonNull RecyclerView.ViewHolder viewHolder) {
     }
 
     /**
      * 当item停止拖动的时候回调
      */
-    public void onSelectedEnd(RecyclerView.ViewHolder viewHolder) {
+    public void onSelectedEnd(@NonNull RecyclerView.ViewHolder viewHolder) {
     }
 
 }

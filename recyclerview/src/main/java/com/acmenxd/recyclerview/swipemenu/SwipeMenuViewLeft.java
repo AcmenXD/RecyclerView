@@ -11,7 +11,7 @@ import android.widget.OverScroller;
  * @date 2017/2/20 9:27
  * @detail 滑动菜单->左侧菜单栏
  */
-public class SwipeMenuViewLeft extends SwipeMenuView {
+public final class SwipeMenuViewLeft extends SwipeMenuView {
 
     public SwipeMenuViewLeft(Context context) {
         this(context, null);

@@ -1,5 +1,9 @@
 package com.acmenxd.recyclerview.wrapper;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -29,11 +33,11 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int mInvertedOrderNumber = 1;
     private OnLoadMoreListener mOnLoadMoreListener;
 
-    public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, OnLoadMoreListener loadMoreListener) {
+    public LoadMoreWrapper(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.Adapter adapter, @Nullable OnLoadMoreListener loadMoreListener) {
         this(recyclerView, adapter, null, loadMoreListener);
     }
 
-    public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, View loadMoreView, OnLoadMoreListener loadMoreListener) {
+    public LoadMoreWrapper(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.Adapter adapter, @NonNull View loadMoreView, @Nullable OnLoadMoreListener loadMoreListener) {
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
         if (loadMoreView == null) {
@@ -49,7 +53,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public LoadMoreWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, int loadMoreLayoutId, OnLoadMoreListener loadMoreListener) {
+    public LoadMoreWrapper(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.Adapter adapter, @LayoutRes int loadMoreLayoutId, @Nullable OnLoadMoreListener loadMoreListener) {
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
         mLoadMoreLayoutId = loadMoreLayoutId;
@@ -66,7 +70,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
      * 提前多少个加载下一次数据,默认剩余1个item项时加载
      * * 如需点击加载更多, 设置为0即可
      */
-    public void setRefreshBefore(int pInvertedOrderNumber) {
+    public void setRefreshBefore(@IntRange(from = 0) int pInvertedOrderNumber) {
         mInvertedOrderNumber = pInvertedOrderNumber;
         if (mLoadMoreView instanceof LoadMoreView) {
             if (mInvertedOrderNumber <= 0) {
@@ -85,7 +89,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         return mLoadMoreView != null || mLoadMoreLayoutId != 0;
     }
 
-    private boolean isShowLoadMore(int viewPosition) {
+    private boolean isShowLoadMore(@IntRange(from = 0) int viewPosition) {
         return hasLoadMore() && (viewPosition == WrapperUtils.getWarpperItemCount(mRecyclerView)
                 + WrapperUtils.getDataItemCount(mRecyclerView) - 1);
     }

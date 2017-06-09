@@ -5,7 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -28,7 +29,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
 
     private int linePaddingDip = 0;
 
-    public LinearLayoutDecoration(Context context) {
+    public LinearLayoutDecoration(@NonNull Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();
@@ -37,14 +38,14 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
     /**
      * 设置line线的填充边距
      */
-    public void setLinePaddingDip(int pLinePaddingDip) {
+    public void setLinePaddingDip(@IntRange(from = 0) int pLinePaddingDip) {
         if (pLinePaddingDip >= 0) {
             linePaddingDip = pLinePaddingDip;
         }
     }
 
     @Override
-    public void onDraw(Canvas c, RecyclerView parent) {
+    public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent) {
         int orientation = AdapterUtils.getOrientation(parent);
         if (orientation == OrientationHelper.VERTICAL) {
             drawVertical(c, parent);
@@ -55,7 +56,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private void drawVertical(Canvas c, RecyclerView parent) {
+    private void drawVertical(@NonNull Canvas c, @NonNull RecyclerView parent) {
         int linePadding = getLinePadding(parent, linePaddingDip, parent.getWidth());
         final int left = parent.getPaddingLeft();
         final int right = parent.getWidth() - parent.getPaddingRight();
@@ -72,7 +73,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private void drawHorizontal(Canvas c, RecyclerView parent) {
+    private void drawHorizontal(@NonNull Canvas c, @NonNull RecyclerView parent) {
         int linePadding = getLinePadding(parent, linePaddingDip, parent.getHeight());
         final int top = parent.getPaddingTop();
         final int bottom = parent.getHeight() - parent.getPaddingBottom();
@@ -90,7 +91,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
+    public void getItemOffsets(@NonNull Rect outRect, @IntRange(from = 0) int itemPosition, @NonNull RecyclerView parent) {
         int orientation = AdapterUtils.getOrientation(parent);
         if (orientation == OrientationHelper.VERTICAL) {
             outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
@@ -99,7 +100,7 @@ public class LinearLayoutDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private int getLinePadding(RecyclerView parent, int padding, int all) {
+    private int getLinePadding(@NonNull RecyclerView parent, @IntRange(from = 0) int padding, int all) {
         if (padding <= 0) {
             return 0;
         }

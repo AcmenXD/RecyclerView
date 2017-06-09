@@ -1,6 +1,9 @@
 package com.acmenxd.recyclerview.delegate;
 
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+
 /**
  * @author AcmenXD
  * @version v1.0
@@ -13,7 +16,7 @@ public interface ItemDelegate<T> {
     /**
      * 判断是否使用getItemViewLayoutId返回的布局文件
      */
-    boolean isItemViewType(T data, int dataPosition);
+    boolean isItemViewType(@NonNull T data, @IntRange(from = 0) int dataPosition);
 
     /**
      * 返回item的布局文件Id
@@ -23,6 +26,6 @@ public interface ItemDelegate<T> {
     /**
      * 刷新视图
      */
-    void convert(ViewHolder viewHolder, T data, int dataPosition);
+    void convert(@NonNull ViewHolder viewHolder, @NonNull T data, @IntRange(from = 0) int dataPosition);
 
 }

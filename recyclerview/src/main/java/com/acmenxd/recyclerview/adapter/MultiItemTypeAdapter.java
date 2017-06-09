@@ -1,6 +1,8 @@
 package com.acmenxd.recyclerview.adapter;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
@@ -28,7 +30,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     protected ItemDelegateManager mItemDelegateManager;
     private GroupListener mGroupListener; // 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
 
-    public MultiItemTypeAdapter(Context context, RecyclerView recyclerView, List<T> datas) {
+    public MultiItemTypeAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull List<T> datas) {
         mContext = context;
         mRecyclerView = recyclerView;
         setDatas(datas);
@@ -39,20 +41,20 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
         return mDatas;
     }
 
-    public void setDatas(List<T> pDatas) {
-        if(pDatas == null){
+    public void setDatas(@NonNull List<T> pDatas) {
+        if (pDatas == null) {
             mDatas = new ArrayList<>();
-        }else {
+        } else {
             mDatas = pDatas;
         }
     }
 
-    public MultiItemTypeAdapter addItemViewDelegate(ItemDelegate<T> pItemDelegate) {
+    public MultiItemTypeAdapter addItemViewDelegate(@NonNull ItemDelegate<T> pItemDelegate) {
         mItemDelegateManager.addDelegate(pItemDelegate);
         return this;
     }
 
-    public MultiItemTypeAdapter addItemViewDelegate(int viewType, ItemDelegate<T> pItemDelegate) {
+    public MultiItemTypeAdapter addItemViewDelegate(@IntRange(from = 0) int viewType, @NonNull ItemDelegate<T> pItemDelegate) {
         mItemDelegateManager.addDelegate(viewType, pItemDelegate);
         return this;
     }
@@ -64,7 +66,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public int getItemViewType(int dataPosition) {
+    public int getItemViewType(@IntRange(from = 0) int dataPosition) {
         if (mItemDelegateManager.getItemViewDelegateCount() <= 0) {
             return super.getItemViewType(dataPosition);
         }
@@ -72,7 +74,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, @IntRange(from = 0) int viewType) {
         ItemDelegate itemDelegate = mItemDelegateManager.getItemViewDelegate(viewType);
         int layoutId = itemDelegate.getItemViewLayoutId();
         ViewHolder viewHolder = ViewHolder.createViewHolder(mContext, parent, layoutId);
@@ -80,14 +82,14 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int dataPosition) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, @IntRange(from = 0) int dataPosition) {
         if (mDatas.size() > dataPosition) {
             mItemDelegateManager.convert(viewHolder, mDatas.get(dataPosition), dataPosition);
         }
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         AdapterUtils.onAttachedToRecyclerView(null, recyclerView, new AdapterUtils.SpanSizeCallback() {
             @Override
@@ -104,7 +106,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onViewAttachedToWindow(ViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         if (isGroupItemLayout(holder.getLayoutPosition())) {
             AdapterUtils.setFullSpan(holder);
@@ -114,14 +116,14 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     /**
      * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
      */
-    public void setGroupListener(GroupListener pGroupListener) {
+    public void setGroupListener(@NonNull GroupListener pGroupListener) {
         mGroupListener = pGroupListener;
     }
 
     /**
      * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
      */
-    private boolean isGroupItemLayout(int viewPosition) {
+    private boolean isGroupItemLayout(@IntRange(from = 0) int viewPosition) {
         if (mGroupListener != null) {
             int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
             if (dataPosition >= 0 && dataPosition < mDatas.size()) {

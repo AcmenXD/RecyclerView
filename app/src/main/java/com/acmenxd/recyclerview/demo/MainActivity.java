@@ -276,12 +276,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public boolean onMenuItemClick(int dataPosition, int menuItemLayoutId, int direction) {
+            public boolean onMenuItemClick(int dataPosition, int menuItemId, int direction) {
                 String dirStr = "左边菜单";
                 if (direction == SwipeMenuView.RIGHT_DIRECTION) {
                     dirStr = "右边菜单";
                 }
-                switch (menuItemLayoutId) {
+                switch (menuItemId) {
                     case R.id.menu_1:
                         showToast("position:" + dataPosition + dirStr + "的第一个menu");
                         break;
@@ -366,8 +366,8 @@ public class MainActivity extends AppCompatActivity {
         t3.setText("Footer 1\n\nFooter 1");
         TextView t4 = new TextView(this);
         t4.setText("Footer 2\n\nFooter 2");
-        mHeaderAndFooterWrapper.addFootView(t3);
-        mHeaderAndFooterWrapper.addFootView(t4);
+        mHeaderAndFooterWrapper.addFooterView(t3);
+        mHeaderAndFooterWrapper.addFooterView(t4);
         // LoadMore Adapter
         mLoadMoreWarpper = new LoadMoreWrapper(rv, mHeaderAndFooterWrapper, new OnLoadMoreListener() {
             @Override

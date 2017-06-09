@@ -1,9 +1,10 @@
 package com.acmenxd.recyclerview.swipemenu;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -48,7 +49,7 @@ public abstract class SwipeMenuView extends LinearLayout {
         return mSwipeMenuLayout;
     }
 
-    public void setSwipeMenuLayout(SwipeMenuLayout pSwipeMenuLayout) {
+    public void setSwipeMenuLayout(@NonNull SwipeMenuLayout pSwipeMenuLayout) {
         mSwipeMenuLayout = pSwipeMenuLayout;
     }
 
@@ -62,7 +63,7 @@ public abstract class SwipeMenuView extends LinearLayout {
     /**
      * 添加menuview
      */
-    public void addMenuView(View menuView, int[] ids, int direction, RecyclerView pRecyclerView, final OnSwipeMenuListener pSwipeMenuListener) {
+    public void addMenuView(@NonNull View menuView, @IdRes int[] ids, int direction, @NonNull RecyclerView pRecyclerView, @NonNull final OnSwipeMenuListener pSwipeMenuListener) {
         if (menuView != null) {
             this.addView(menuView);
             // 设置布局

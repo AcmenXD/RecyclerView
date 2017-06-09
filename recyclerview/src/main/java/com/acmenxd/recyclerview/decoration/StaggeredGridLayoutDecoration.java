@@ -5,6 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -28,26 +31,26 @@ public class StaggeredGridLayoutDecoration extends RecyclerView.ItemDecoration {
     /**
      * 设置line线的填充边距
      */
-    public void setLinePaddingDip(int pLinePaddingDip) {
+    public void setLinePaddingDip(@IntRange(from = 0) int pLinePaddingDip) {
         if (pLinePaddingDip >= 0) {
             linePaddingDip = pLinePaddingDip;
         }
     }
 
-    public StaggeredGridLayoutDecoration(Context context) {
+    public StaggeredGridLayoutDecoration(@NonNull Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();
     }
 
     @Override
-    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+    public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         int orientation = AdapterUtils.getOrientation(parent);
         drawHorizontal(c, parent, orientation);
         drawVertical(c, parent, orientation);
     }
 
-    private int getSpanCount(RecyclerView parent) {
+    private int getSpanCount(@NonNull RecyclerView parent) {
         // 列数
         int spanCount = -1;
         RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
@@ -57,7 +60,7 @@ public class StaggeredGridLayoutDecoration extends RecyclerView.ItemDecoration {
         return spanCount;
     }
 
-    private void drawHorizontal(Canvas c, RecyclerView parent, int orientation) {
+    private void drawHorizontal(@NonNull Canvas c, @NonNull RecyclerView parent, @IntRange(from = OrientationHelper.HORIZONTAL, to = OrientationHelper.VERTICAL) int orientation) {
         int childCount = parent.getChildCount() - 1;
         int linePadding = getLinePadding(parent, linePaddingDip, parent.getWidth());
         for (int i = 0; i < childCount; i++) {
@@ -76,7 +79,7 @@ public class StaggeredGridLayoutDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private void drawVertical(Canvas c, RecyclerView parent, int orientation) {
+    private void drawVertical(@NonNull Canvas c, @NonNull RecyclerView parent, @IntRange(from = OrientationHelper.HORIZONTAL, to = OrientationHelper.VERTICAL) int orientation) {
         final int childCount = parent.getChildCount() - 1;
         int linePadding = getLinePadding(parent, linePaddingDip, parent.getHeight());
         for (int i = 0; i < childCount; i++) {
@@ -96,11 +99,11 @@ public class StaggeredGridLayoutDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
+    public void getItemOffsets(@NonNull Rect outRect, @IntRange(from = 0) int itemPosition, @NonNull RecyclerView parent) {
         outRect.set(0, 0, mDivider.getIntrinsicWidth(), mDivider.getIntrinsicHeight());
     }
 
-    private int getLinePadding(RecyclerView parent, int padding, int all) {
+    private int getLinePadding(@NonNull RecyclerView parent, @IntRange(from = 0) int padding, int all) {
         if (padding <= 0) {
             return 0;
         }

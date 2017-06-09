@@ -1,5 +1,9 @@
 package com.acmenxd.recyclerview.wrapper;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,7 +22,7 @@ import com.acmenxd.recyclerview.listener.OnEmptyListener;
  * @date 2017/2/16 16:00
  * @detail RecyclerView 添加 数据空时显示的视图
  */
-public class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public final class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_TYPE_EMPTY = WrapperUtils.ITEM_TYPE_EMPTY;
 
     private RecyclerView mRecyclerView;
@@ -27,14 +31,14 @@ public class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int mEmptyLayoutId;
     private OnEmptyListener mOnEmptyListener;
 
-    public EmptyWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, View emptyView, OnEmptyListener onEmptyListener) {
+    public EmptyWrapper(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.Adapter adapter, @NonNull View emptyView, @Nullable OnEmptyListener onEmptyListener) {
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
         mEmptyView = emptyView;
         mOnEmptyListener = onEmptyListener;
     }
 
-    public EmptyWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter, int emptyLayoutId, OnEmptyListener onEmptyListener) {
+    public EmptyWrapper(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.Adapter adapter, @LayoutRes int emptyLayoutId, @Nullable OnEmptyListener onEmptyListener) {
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
         mEmptyLayoutId = emptyLayoutId;
@@ -45,7 +49,7 @@ public class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return (mEmptyView != null || mEmptyLayoutId != 0) && WrapperUtils.getDataItemCount(mRecyclerView) == 0;
     }
 
-    private boolean isEmptyView(int viewPosition) {
+    private boolean isEmptyView(@IntRange(from = 0) int viewPosition) {
         if (isEmpty() && WrapperUtils.getEmptyUpItemCount(mRecyclerView) == viewPosition) {
             return true;
         }

@@ -1,6 +1,8 @@
 package com.acmenxd.recyclerview.group;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,7 +16,7 @@ import android.widget.LinearLayout;
  * @date 2017/4/14 17:16
  * @detail RecyclerView -> 分组Item视图
  */
-public class GroupItemLayout extends LinearLayout {
+public final class GroupItemLayout extends LinearLayout {
     private Context mContext;
     private GroupHeadLayout mGroupHeadLayout;
     private int mOrientation = -1;
@@ -33,7 +35,7 @@ public class GroupItemLayout extends LinearLayout {
         mContext = context;
     }
 
-    protected void addGroupItemView(View view, int level, int orientation, int groupItemPosition) {
+    protected void addGroupItemView(@NonNull View view, @IntRange(from = 0) int level, @IntRange(from = OrientationHelper.HORIZONTAL, to = OrientationHelper.VERTICAL) int orientation, @IntRange(from = GroupListener.ITEM_TOP, to = GroupListener.ITEM_OUT_LEFT) int groupItemPosition) {
         if (mGroupHeadLayout == null) {
             this.mOrientation = orientation;
             this.mGroupItemPosition = groupItemPosition;
@@ -81,7 +83,7 @@ public class GroupItemLayout extends LinearLayout {
         }
     }
 
-    protected View getGroupItemView(int level) {
+    protected View getGroupItemView(@IntRange(from = 0) int level) {
         if (mGroupHeadLayout != null) {
             return mGroupHeadLayout.getGroupHeadView(level);
         }
@@ -109,7 +111,7 @@ public class GroupItemLayout extends LinearLayout {
         return -1;
     }
 
-    protected void setGroupItemLevelNum(int groupItemLevelNum){
+    protected void setGroupItemLevelNum(@IntRange(from = 0) int groupItemLevelNum) {
         if (mGroupHeadLayout != null) {
             mGroupHeadLayout.setGroupItemLevelNum(groupItemLevelNum);
         }

@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.group;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,7 +43,7 @@ public interface GroupListener {
      *
      * @param dataPosition 定位数据的position
      */
-    boolean isCreateGroupItemView(int dataPosition);
+    boolean isCreateGroupItemView(@IntRange(from = 0) int dataPosition);
 
     /**
      * 获取GroupItemView视图
@@ -50,7 +52,7 @@ public interface GroupListener {
      * @param groupLevel   分组层级(计数从0开始)
      * @param dataPosition 定位数据的position
      */
-    View getGroupItemView(ViewGroup root, int groupLevel, int dataPosition);
+    View getGroupItemView(@NonNull ViewGroup root, @IntRange(from = 0) int groupLevel, @IntRange(from = 0) int dataPosition);
 
     /**
      * 更新GroupItemView视图
@@ -59,7 +61,7 @@ public interface GroupListener {
      * @param groupLevel    分组层级(计数从0开始)
      * @param dataPosition  定位数据的position
      */
-    void changeGroupItemView(View groupItemView, int groupLevel, int dataPosition);
+    void changeGroupItemView(@NonNull View groupItemView, @IntRange(from = 0) int groupLevel, @IntRange(from = 0) int dataPosition);
 
     /**
      * 获取GroupHeadView视图
@@ -69,7 +71,7 @@ public interface GroupListener {
      * @param groupLevel   分组层级(计数从0开始)
      * @param dataPosition 定位数据的position
      */
-    View getGroupHeadView(ViewGroup root, int groupLevel, int dataPosition);
+    View getGroupHeadView(@NonNull ViewGroup root, @IntRange(from = 0) int groupLevel, @IntRange(from = 0) int dataPosition);
 
     /**
      * 更新GroupHeadView视图
@@ -79,5 +81,5 @@ public interface GroupListener {
      * @param groupLevel    分组层级(计数从0开始)
      * @param dataPosition  定位数据的position
      */
-    void changeGroupHeadView(View groupHeadView, int groupLevel, int dataPosition);
+    void changeGroupHeadView(@NonNull View groupHeadView, @IntRange(from = 0) int groupLevel, @IntRange(from = 0) int dataPosition);
 }

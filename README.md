@@ -26,7 +26,7 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:1.8'
+	 compile 'com.github.AcmenXD:RecyclerView:2.0'
 ```
 ### 功能
 ---
@@ -301,8 +301,8 @@ t3.setText("Footer 1\n\nFooter 1");
 TextView t4 = new TextView(this);
 t4.setText("Footer 2\n\nFooter 2");
 // FooterView添加到列表中
-mHeaderAndFooterWrapper.addFootView(t3);
-mHeaderAndFooterWrapper.addFootView(t4);
+mHeaderAndFooterWrapper.addFooterView(t3);
+mHeaderAndFooterWrapper.addFooterView(t4);
 ```
 ### Empty视图
 ```java

@@ -2,6 +2,7 @@ package com.acmenxd.recyclerview.group;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +27,7 @@ import java.util.Map;
  * @date 2017/2/10 15:45
  * @detail RecyclerView -> 支持分组功能主类
  */
-public class GroupDecoration extends RecyclerView.ItemDecoration {
+public final class GroupDecoration extends RecyclerView.ItemDecoration {
     private RecyclerView mRecyclerView;
     private GroupHeadLayout mGroupHeadLayout; // Head根布局
     private GroupListener mListener; // 回调监听
@@ -56,7 +57,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         orientation = AdapterUtils.getOrientation(parent);
         isHORIZONTAL = orientation == OrientationHelper.HORIZONTAL;
@@ -125,7 +126,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+    public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
         int lastPosition = -1;
         int firstPosition = findFirstVisiblePosition(parent);
@@ -213,7 +214,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private int getCurrViewTop(View currView, int level) {
+    private int getCurrViewTop(@NonNull View currView, @IntRange(from = 0) int level) {
         if (currView != null) {
             GroupItemLayout groupItemLayout = getGroupItemLayoutByView(currView);
             if (groupItemLayout != null) {
@@ -230,7 +231,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 获取当前Head底部的View
      */
-    private View getCurrView(RecyclerView parent, int wh, int index) {
+    private View getCurrView(@NonNull RecyclerView parent, @IntRange(from = 0) int wh, @IntRange(from = 0) int index) {
         View view = isHORIZONTAL ? parent.findChildViewUnder(wh, 0) : parent.findChildViewUnder(0, wh);
         if (view == null && index <= 40 && wh > 0) {
             view = getCurrView(parent, wh - 5, ++index);
@@ -241,7 +242,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 获取GroupItemLayout
      */
-    private GroupItemLayout getGroupItemLayoutByView(View view) {
+    private GroupItemLayout getGroupItemLayoutByView(@NonNull View view) {
         GroupItemLayout groupItemLayout = null;
         if (view instanceof GroupItemLayout) {
             groupItemLayout = (GroupItemLayout) view;
@@ -257,7 +258,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 设置Head与对应的groupitem等宽 或 等高
      */
-    private void setGroupHeadLayoutWH(View view, int level) {
+    private void setGroupHeadLayoutWH(@NonNull View view, @IntRange(from = 0) int level) {
         GroupItemLayout groupItemLayout = getGroupItemLayoutByView(view);
         if (groupItemLayout != null) {
             View groupItemView = groupItemLayout.getGroupItemView(level);
@@ -279,7 +280,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 查找当前第一个显示的视图位置
      */
-    private int findFirstVisiblePosition(RecyclerView parent) {
+    private int findFirstVisiblePosition(@NonNull RecyclerView parent) {
         int firstVisiblePosition = 0;
         RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
@@ -300,7 +301,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 查找nowPosition位置到当前第一个视图,有没有带GroupItemLayout的位置
      */
-    public int findVisiblePositionDesc(int nowPosition, int firstVisiblePosition) {
+    public int findVisiblePositionDesc(@IntRange(from = 0) int nowPosition, @IntRange(from = 0) int firstVisiblePosition) {
         for (int i = nowPosition - 1; i > firstVisiblePosition; i--) {
             if (isGroupHeadLayout(i)) {
                 return i;
@@ -312,7 +313,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 查找nowPosition位置到当前第一个视图,有没有带GroupItemLayout的位置
      */
-    public View findVisiblePositionAsc(int firstVisiblePosition, int nowPosition) {
+    public View findVisiblePositionAsc(@IntRange(from = 0) int firstVisiblePosition, @IntRange(from = 0) int nowPosition) {
         for (int i = firstVisiblePosition + 1; i < nowPosition; i++) {
             if (isGroupHeadLayout(i)) {
                 RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(i);
@@ -334,7 +335,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 向上寻找最近的一个Head的位置(包括参数位置)
      */
-    private int findUpGroupHeadPosition(int formPosition, int lastPosition, int level) {
+    private int findUpGroupHeadPosition(@IntRange(from = 0) int formPosition, @IntRange(from = 0) int lastPosition, @IntRange(from = 0) int level) {
         if (formPosition < lastPosition) {
             formPosition = lastPosition;
         }
@@ -364,7 +365,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 根据ViewPosition找到最大Level层级
      */
-    private int getMaxLevelByViewPosition(int viewPosition) {
+    private int getMaxLevelByViewPosition(@IntRange(from = 0) int viewPosition) {
         if (checkGroups.containsKey(viewPosition) && checkGroups.get(viewPosition).isHave) {
             int[] levels = checkGroups.get(viewPosition).levels;
             for (int i = 0, len = levels.length; i < len; i++) {
@@ -379,7 +380,7 @@ public class GroupDecoration extends RecyclerView.ItemDecoration {
     /**
      * 根据ViewPosition找到最小Level层级
      */
-    private int getMinLevelByViewPosition(int viewPosition) {
+    private int getMinLevelByViewPosition(@IntRange(from = 0) int viewPosition) {
         if (checkGroups.containsKey(viewPosition) && checkGroups.get(viewPosition).isHave) {
             int[] levels = checkGroups.get(viewPosition).levels;
             for (int i = levels.length - 1; i >= 0; i--) {

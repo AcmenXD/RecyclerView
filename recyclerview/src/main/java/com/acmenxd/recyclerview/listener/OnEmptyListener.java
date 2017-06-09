@@ -1,5 +1,6 @@
 package com.acmenxd.recyclerview.listener;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -10,5 +11,5 @@ import android.view.View;
  * @detail EmptyWarpper 事件回调
  */
 public abstract class OnEmptyListener {
-    public abstract void onEmptyClick(View itemView);
+    public abstract void onEmptyClick(@NonNull View itemView);
 }

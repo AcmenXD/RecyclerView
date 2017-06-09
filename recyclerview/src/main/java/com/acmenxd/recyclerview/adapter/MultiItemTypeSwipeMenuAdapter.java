@@ -1,6 +1,8 @@
 package com.acmenxd.recyclerview.adapter;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +31,7 @@ import java.util.List;
 public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
     private OnSwipeMenuListener mSwipeMenuListener;
 
-    public MultiItemTypeSwipeMenuAdapter(Context context, RecyclerView recyclerView, List<T> datas, OnSwipeMenuListener pSwipeMenuListener) {
+    public MultiItemTypeSwipeMenuAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull List<T> datas, @NonNull OnSwipeMenuListener pSwipeMenuListener) {
         super(context, recyclerView, datas);
         mContext = context;
         mRecyclerView = recyclerView;
@@ -38,7 +40,7 @@ public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, @IntRange(from = 0) int viewType) {
         ItemDelegate itemDelegate = mItemDelegateManager.getItemViewDelegate(viewType);
         int layoutId = itemDelegate.getItemViewLayoutId();
         SwipeMenuLayout swipeMenuLayout = (SwipeMenuLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.swipe_menu, parent, false);
@@ -73,7 +75,7 @@ public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int dataPosition) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, @IntRange(from = 0) int dataPosition) {
         SwipeMenuLayout swipeMenuLayout = (SwipeMenuLayout) viewHolder.itemView;
         swipeMenuLayout.resetMenu();
         // 左侧按钮

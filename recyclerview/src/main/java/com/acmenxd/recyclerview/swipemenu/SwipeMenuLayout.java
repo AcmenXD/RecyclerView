@@ -1,6 +1,8 @@
 package com.acmenxd.recyclerview.swipemenu;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -20,7 +22,7 @@ import com.acmenxd.recyclerview.R;
  * @date 2017/2/17 17:19
  * @detail 滑动菜单->单个item总项
  */
-public class SwipeMenuLayout extends FrameLayout {
+public final class SwipeMenuLayout extends FrameLayout {
     private SwipeMenuViewLeft leftMenuView; // 左侧菜单栏
     private SwipeMenuViewRight rightMenuView; // 右侧菜单栏
     private SwipeMenuView currMenuView; // 当前选中的菜单栏
@@ -44,7 +46,7 @@ public class SwipeMenuLayout extends FrameLayout {
     private RecyclerView mRecyclerView;
     private boolean loseOnceTouch = false;
 
-    public void setRecyclerView(RecyclerView pRecyclerView) {
+    public void setRecyclerView(@NonNull RecyclerView pRecyclerView) {
         mRecyclerView = pRecyclerView;
     }
 
@@ -133,7 +135,7 @@ public class SwipeMenuLayout extends FrameLayout {
      * @param pCompareView 排除当前对比view, 无需对比传null即可
      * @return 非当前对比view, 并且menu为打开的view
      */
-    public SwipeMenuLayout isMenuOpen_checkAll(RecyclerView pRecyclerView, View pCompareView) {
+    public SwipeMenuLayout isMenuOpen_checkAll(@NonNull RecyclerView pRecyclerView, View pCompareView) {
         int count = pRecyclerView.getChildCount();
         for (int i = 0; i < count; i++) {
             View view = pRecyclerView.getChildAt(i);
@@ -178,7 +180,7 @@ public class SwipeMenuLayout extends FrameLayout {
         smoothOpenMenu(mScrollerDuration);
     }
 
-    private void smoothOpenMenu(int duration) {
+    private void smoothOpenMenu(@IntRange(from = 0) int duration) {
         if (currMenuView != null) {
             currMenuView.autoOpenMenu(mScroller, getScrollX(), duration);
             invalidate();
@@ -192,7 +194,7 @@ public class SwipeMenuLayout extends FrameLayout {
         smoothCloseMenu(mScrollerDuration);
     }
 
-    protected void smoothCloseMenu(int duration) {
+    protected void smoothCloseMenu(@IntRange(from = 0) int duration) {
         if (currMenuView != null) {
             currMenuView.autoCloseMenu(mScroller, getScrollX(), duration);
             invalidate();

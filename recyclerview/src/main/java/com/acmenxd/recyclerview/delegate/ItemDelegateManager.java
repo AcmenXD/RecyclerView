@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.delegate;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v4.util.SparseArrayCompat;
 
 /**
@@ -9,10 +11,10 @@ import android.support.v4.util.SparseArrayCompat;
  * @date 2017/2/16 16:00
  * @detail RecyclerView -> 多类型item管理类
  */
-public class ItemDelegateManager<T> {
+public final class ItemDelegateManager<T> {
     SparseArrayCompat<ItemDelegate<T>> delegates = new SparseArrayCompat();
 
-    public ItemDelegateManager<T> addDelegate(ItemDelegate<T> delegate) {
+    public ItemDelegateManager<T> addDelegate(@NonNull ItemDelegate<T> delegate) {
         int viewType = delegates.size();
         if (delegate != null) {
             delegates.put(viewType, delegate);
@@ -21,7 +23,7 @@ public class ItemDelegateManager<T> {
         return this;
     }
 
-    public ItemDelegateManager<T> addDelegate(int viewType, ItemDelegate<T> delegate) {
+    public ItemDelegateManager<T> addDelegate(@IntRange(from = 0) int viewType, @NonNull ItemDelegate<T> delegate) {
         if (delegates.get(viewType) != null) {
             throw new IllegalArgumentException(
                     "viewType 已被占用 = " + viewType + ". 被占用的viewType对象是:" + delegates.get(viewType));
@@ -30,7 +32,7 @@ public class ItemDelegateManager<T> {
         return this;
     }
 
-    public ItemDelegateManager<T> removeDelegate(ItemDelegate<T> delegate) {
+    public ItemDelegateManager<T> removeDelegate(@NonNull ItemDelegate<T> delegate) {
         if (delegate == null) {
             throw new NullPointerException("ItemDelegate 不能为null");
         }
@@ -41,7 +43,7 @@ public class ItemDelegateManager<T> {
         return this;
     }
 
-    public ItemDelegateManager<T> removeDelegate(int viewType) {
+    public ItemDelegateManager<T> removeDelegate(@IntRange(from = 0) int viewType) {
         int indexToRemove = delegates.indexOfKey(viewType);
         if (indexToRemove >= 0) {
             delegates.removeAt(indexToRemove);
@@ -49,7 +51,7 @@ public class ItemDelegateManager<T> {
         return this;
     }
 
-    public int getItemViewType(T data, int dataPosition) {
+    public int getItemViewType(@NonNull T data, @IntRange(from = 0) int dataPosition) {
         int delegatesCount = delegates.size();
         for (int i = delegatesCount - 1; i >= 0; i--) {
             ItemDelegate<T> delegate = delegates.valueAt(i);
@@ -60,7 +62,7 @@ public class ItemDelegateManager<T> {
         throw new IllegalArgumentException("ItemDelegate 无匹配, dataPosition=" + dataPosition);
     }
 
-    public ItemDelegate getItemViewDelegate(int viewType) {
+    public ItemDelegate getItemViewDelegate(@IntRange(from = 0) int viewType) {
         return delegates.get(viewType);
     }
 
@@ -68,7 +70,7 @@ public class ItemDelegateManager<T> {
         return delegates.size();
     }
 
-    public void convert(ViewHolder viewHolder, T data, int dataPosition) {
+    public void convert(@NonNull ViewHolder viewHolder, @NonNull T data, @IntRange(from = 0) int dataPosition) {
         int delegatesCount = getItemViewDelegateCount();
         for (int i = 0; i < delegatesCount; i++) {
             ItemDelegate<T> delegate = delegates.valueAt(i);

@@ -1,5 +1,7 @@
 package com.acmenxd.recyclerview.wrapper;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,17 +29,17 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mInnerAdapter;
 
-    public HeaderAndFooterWrapper(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+    public HeaderAndFooterWrapper(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.Adapter adapter) {
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
     }
 
 
-    public void addHeaderView(View view) {
+    public void addHeaderView(@NonNull View view) {
         mHeaderViews.put(mHeaderViews.size() + ITEM_TYPE_HEADER, view);
     }
 
-    public void addFooterView(View view) {
+    public void addFooterView(@NonNull View view) {
         mFootViews.put(mFootViews.size() + ITEM_TYPE_FOOTER, view);
     }
 
@@ -53,11 +55,11 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
         return mInnerAdapter;
     }
 
-    private boolean isHeaderViewPos(int viewPosition) {
+    private boolean isHeaderViewPos(@IntRange(from = 0) int viewPosition) {
         return viewPosition < getHeadersCount();
     }
 
-    private boolean isFooterViewPos(int viewPosition) {
+    private boolean isFooterViewPos(@IntRange(from = 0) int viewPosition) {
         int footerUpItemCount = WrapperUtils.getFooterUpItemCount(mRecyclerView);
         return viewPosition >= footerUpItemCount && viewPosition < footerUpItemCount + getFootersCount();
     }

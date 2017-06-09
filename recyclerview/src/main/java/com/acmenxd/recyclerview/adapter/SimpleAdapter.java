@@ -1,6 +1,9 @@
 package com.acmenxd.recyclerview.adapter;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 
@@ -23,7 +26,7 @@ public abstract class SimpleAdapter<T> extends MultiItemTypeAdapter<T> {
     protected List<T> mDatas;
     protected LayoutInflater mInflater;
 
-    public SimpleAdapter(final Context context, final RecyclerView recyclerView, final int layoutId, List<T> datas) {
+    public SimpleAdapter(@NonNull final Context context, @NonNull final RecyclerView recyclerView, @LayoutRes final int layoutId, @NonNull List<T> datas) {
         super(context, recyclerView, datas);
         mContext = context;
         mRecyclerView = recyclerView;
@@ -49,6 +52,6 @@ public abstract class SimpleAdapter<T> extends MultiItemTypeAdapter<T> {
         });
     }
 
-    public abstract void convert(ViewHolder viewHolder, T item, int dataPosition);
+    public abstract void convert(@NonNull ViewHolder viewHolder, @NonNull T item, @IntRange(from = 0) int dataPosition);
 
 }

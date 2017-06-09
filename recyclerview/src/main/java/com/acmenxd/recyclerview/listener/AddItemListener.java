@@ -1,6 +1,7 @@
 package com.acmenxd.recyclerview.listener;
 
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,14 +25,14 @@ import com.acmenxd.recyclerview.wrapper.WrapperUtils;
  * @date 2017/2/20 11:54
  * @detail RecyclerView -> 各种事件回调
  */
-public class AddItemListener {
+public final class AddItemListener {
     /**
      * 设置RecyclerView支持 单击 & 长按 事件
      *
      * @param pRecyclerView recyclerView实例
      * @param pItemCallback 单击 & 长按回调函数
      */
-    public AddItemListener(RecyclerView pRecyclerView, ItemCallback pItemCallback) {
+    public AddItemListener(@NonNull RecyclerView pRecyclerView, @NonNull ItemCallback pItemCallback) {
         if (pItemCallback != null) {
             pRecyclerView.addOnItemTouchListener(new OnItemTouchListenerCallback(pRecyclerView, pItemCallback));
         }
@@ -43,7 +44,7 @@ public class AddItemListener {
      * @param pRecyclerView  recyclerView实例
      * @param pSwipeCallback 滑动删除 回调函数
      */
-    public AddItemListener(RecyclerView pRecyclerView, ItemSwipeCallback pSwipeCallback) {
+    public AddItemListener(@NonNull RecyclerView pRecyclerView, @NonNull ItemSwipeCallback pSwipeCallback) {
         if (pSwipeCallback != null) {
             createCallback(pRecyclerView, pSwipeCallback.getSwipeFlags(), 0, pSwipeCallback, null, null);
         }
@@ -55,7 +56,7 @@ public class AddItemListener {
      * @param pRecyclerView recyclerView实例
      * @param pDragCallback 拖拽变换 回调函数
      */
-    public AddItemListener(RecyclerView pRecyclerView, ItemDragCallback pDragCallback) {
+    public AddItemListener(@NonNull RecyclerView pRecyclerView, @NonNull ItemDragCallback pDragCallback) {
         if (pDragCallback != null) {
             createCallback(pRecyclerView, 0, pDragCallback.getDragFlags(), null, pDragCallback, null);
         }
@@ -70,7 +71,7 @@ public class AddItemListener {
      * @param pSwipeCallback 滑动删除 回调函数
      * @param pDragCallback  拖拽变换 回调函数
      */
-    public AddItemListener(RecyclerView pRecyclerView, ItemCallback pItemCallback, ItemSwipeCallback pSwipeCallback, ItemDragCallback pDragCallback) {
+    public AddItemListener(@NonNull RecyclerView pRecyclerView, ItemCallback pItemCallback, ItemSwipeCallback pSwipeCallback, ItemDragCallback pDragCallback) {
         int swipeFlags = 0;
         int dragFlags = 0;
         if (pSwipeCallback != null) {
@@ -93,7 +94,7 @@ public class AddItemListener {
         private RecyclerView mRecyclerView;
         private ItemCallback mItemCallBack;
 
-        public OnItemTouchListenerCallback(RecyclerView pRecyclerView, ItemCallback pItemCallBack) {
+        public OnItemTouchListenerCallback(@NonNull RecyclerView pRecyclerView, @NonNull ItemCallback pItemCallBack) {
             this.mRecyclerView = pRecyclerView;
             this.mItemCallBack = pItemCallBack;
             mGestureDetector = new GestureDetectorCompat(mRecyclerView.getContext(),
@@ -172,12 +173,12 @@ public class AddItemListener {
      * @param pSwipeCallBack 滑动删除的回调函数,null表示屏蔽此功能
      * @param pDragCallBack  拖拽变换的回调函数,null表示屏蔽此功能
      */
-    private void createCallback(RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags, ItemSwipeCallback pSwipeCallBack, ItemDragCallback pDragCallBack, ItemCallback pItemCallback) {
+    private void createCallback(@NonNull RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags, ItemSwipeCallback pSwipeCallBack, ItemDragCallback pDragCallBack, ItemCallback pItemCallback) {
         int[] result = getSwipeAndDrag(pRecyclerView, pSwipeFlags, pDragFlags);
         new ItemTouchHelper(new ItemTouchHelperCallback(pRecyclerView, result[0], result[1], pSwipeCallBack, pDragCallBack, pItemCallback)).attachToRecyclerView(pRecyclerView);
     }
 
-    private int[] getSwipeAndDrag(RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags) {
+    private int[] getSwipeAndDrag(@NonNull RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags) {
         int orientation = AdapterUtils.getOrientation(pRecyclerView);
         if (pSwipeFlags == 0) {
             if (orientation == OrientationHelper.VERTICAL) {
@@ -212,7 +213,7 @@ public class AddItemListener {
         private int mDragFlags;
         private boolean isSelectedStart = false; // 是否进入拖拽选中状态
 
-        public ItemTouchHelperCallback(RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags, ItemSwipeCallback pSwipeCallBack, ItemDragCallback pDragCallBack, ItemCallback pItemCallback) {
+        public ItemTouchHelperCallback(@NonNull RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags, ItemSwipeCallback pSwipeCallBack, ItemDragCallback pDragCallBack, ItemCallback pItemCallback) {
             this.mRecyclerView = pRecyclerView;
             this.mSwipeCallBack = pSwipeCallBack;
             this.mDragCallBack = pDragCallBack;

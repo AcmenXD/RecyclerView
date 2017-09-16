@@ -31,7 +31,7 @@ RecyclerView功能集封装
 ### 功能
 ---
 ####v2.1 优化
-- 新增支持自定义下拉刷新样式<a href="https://github.com/AcmenXD/SSwipeRefreshLayout">AcmenXD/SSwipeRefreshLayout</a>
+- 支持自定义下拉刷新样式<a href="https://github.com/AcmenXD/SSwipeRefreshLayout">AcmenXD/SSwipeRefreshLayout</a>
 - 部分功能完善及bug修复
 
 ####v2.0 全新升级

@@ -30,7 +30,11 @@ RecyclerView功能集封装
 ```
 ### 功能
 ---
-####v2.0 整体优化
+####v2.1 优化
+- 新增支持自定义下拉刷新样式<a href="https://github.com/AcmenXD/SSwipeRefreshLayout">AcmenXD/SSwipeRefreshLayout</a>
+- 部分功能完善及bug修复
+
+####v2.0 全新升级
 
 ####v1.8 修复问题(修复问题较多,建议升到1.8版本使用):
 - Adatper无数据时,导致GroupHeadLayout计算时出现OOM问题

@@ -1,6 +1,7 @@
 package com.acmenxd.recyclerview.listener;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +16,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.acmenxd.recyclerview.adapter.AdapterUtils;
+import com.acmenxd.recyclerview.group.GroupHeadLayout;
+import com.acmenxd.recyclerview.group.GroupItemLayout;
 import com.acmenxd.recyclerview.swipemenu.SwipeMenuLayout;
 import com.acmenxd.recyclerview.wrapper.WrapperUtils;
 
@@ -94,6 +97,18 @@ public final class AddItemListener {
         private RecyclerView mRecyclerView;
         private ItemCallback mItemCallBack;
 
+        private boolean isDownInView(View view, int x, int y) {
+            Rect rect =  new Rect();
+            view.getDrawingRect(rect);
+            int[] location = new int[2];
+            view.getLocationOnScreen(location);
+            rect.left = location[0];
+            rect.top = location[1];
+            rect.right = rect.right + location[0];
+            rect.bottom = rect.bottom + location[1];
+            return rect.contains(x, y);
+        }
+
         public OnItemTouchListenerCallback(@NonNull RecyclerView pRecyclerView, @NonNull ItemCallback pItemCallBack) {
             this.mRecyclerView = pRecyclerView;
             this.mItemCallBack = pItemCallBack;
@@ -108,7 +123,11 @@ public final class AddItemListener {
                                     if (child instanceof SwipeMenuLayout && (((SwipeMenuLayout) child).isMenuOpen() || ((SwipeMenuLayout) child).isLoseOnceTouch())) {
                                         isMenuOpen = true;
                                     }
-                                    if (child != null && child.isEnabled() && !isMenuOpen) {
+                                    boolean isGroup = false;
+                                    if(child instanceof GroupItemLayout && ((GroupItemLayout) child).getChildAt(0) instanceof GroupHeadLayout){
+                                        isGroup = isDownInView(((GroupItemLayout) child).getChildAt(0),(int)e.getRawX(), (int)e.getRawY());
+                                    }
+                                    if (child != null && child.isEnabled() && !isMenuOpen && !isGroup) {
                                         int viewPosition = mRecyclerView.getChildAdapterPosition(child);
                                         int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
                                         boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);

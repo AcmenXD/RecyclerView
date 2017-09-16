@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.acmenxd.recyclerview.LoadMoreView;
+import com.acmenxd.recyclerview.LoadMoreLayout;
 import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.adapter.MultiItemTypeAdapter;
 import com.acmenxd.recyclerview.adapter.MultiItemTypeSwipeMenuAdapter;
@@ -425,17 +425,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadMore(final View itemView) {
         if (mAdapter.getItemCount() >= 60 || mAdapter.getItemCount() <= 0) {
-            ((LoadMoreView) itemView).showFinish();
+            ((LoadMoreLayout) itemView).showFinish();
             itemView.setEnabled(false);
         } else {
-            ((LoadMoreView) itemView).showLoading();
+            ((LoadMoreLayout) itemView).showLoading();
             itemView.setEnabled(false);
             rv.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     addData();
                     refreshAdapter();
-                    ((LoadMoreView) itemView).showClick();
+                    ((LoadMoreLayout) itemView).showClick();
                     itemView.setEnabled(true);
                     showToast("加载更多");
                 }

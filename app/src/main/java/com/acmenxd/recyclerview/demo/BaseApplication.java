@@ -33,6 +33,7 @@ public final class BaseApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         startTime = System.currentTimeMillis();
         // 初始化完毕
         isInitFinish = true;

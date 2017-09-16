@@ -26,7 +26,7 @@ RecyclerView功能集封装
 ```
 	 // Android系统提供的recyclerview-v7包
 	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:2.0'
+	 compile 'com.github.AcmenXD:RecyclerView:2.1'
 ```
 ### 功能
 ---
@@ -34,7 +34,7 @@ RecyclerView功能集封装
 
 ####v1.8 修复问题(修复问题较多,建议升到1.8版本使用):
 - Adatper无数据时,导致GroupHeadLayout计算时出现OOM问题
-- LoadMoreView初始化状态,ui显示异常问题
+- LoadMoreLayout初始化状态,ui显示异常问题
 - Adatper.mDatas对象变化后,导致更新ui异常的问题
 - Adatper新增setDatas函数, 方便更新数据
 

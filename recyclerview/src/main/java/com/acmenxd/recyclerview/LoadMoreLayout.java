@@ -20,7 +20,7 @@ import com.acmenxd.recyclerview.utils.RecyclerViewUtils;
  * @date 2017/3/17 14:02
  * @detail 默认的底部布局样式
  */
-public final class LoadMoreView extends LinearLayout {
+public final class LoadMoreLayout extends LinearLayout {
     private Context mContext;
     private LinearLayout loadLayout; //正在加载布局
     private ProgressBar progressBar;//正在加载进度
@@ -32,16 +32,16 @@ public final class LoadMoreView extends LinearLayout {
     private LinearLayout finishLayout;//加载完成布局
     private TextView finishTV; //加载完成文本
 
-    public LoadMoreView(Context context) {
+    public LoadMoreLayout(Context context) {
         this(context, null);
         initView();
     }
 
-    public LoadMoreView(Context context, AttributeSet attrs) {
+    public LoadMoreLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LoadMoreView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LoadMoreLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
         initView();

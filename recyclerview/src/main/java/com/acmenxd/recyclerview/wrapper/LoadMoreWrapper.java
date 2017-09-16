@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.acmenxd.recyclerview.LoadMoreView;
+import com.acmenxd.recyclerview.LoadMoreLayout;
 import com.acmenxd.recyclerview.adapter.AdapterUtils;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.listener.OnLoadMoreListener;
@@ -41,7 +41,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         mRecyclerView = recyclerView;
         mInnerAdapter = adapter;
         if (loadMoreView == null) {
-            LoadMoreView view = new LoadMoreView(recyclerView.getContext());
+            LoadMoreLayout view = new LoadMoreLayout(recyclerView.getContext());
             int orientation = AdapterUtils.getOrientation(mRecyclerView);
             view.setOrientation(orientation == OrientationHelper.HORIZONTAL ? OrientationHelper.HORIZONTAL : OrientationHelper.VERTICAL);
             view.showLoading();
@@ -72,11 +72,11 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
      */
     public void setRefreshBefore(@IntRange(from = 0) int pInvertedOrderNumber) {
         mInvertedOrderNumber = pInvertedOrderNumber;
-        if (mLoadMoreView instanceof LoadMoreView) {
+        if (mLoadMoreView instanceof LoadMoreLayout) {
             if (mInvertedOrderNumber <= 0) {
-                ((LoadMoreView) mLoadMoreView).showClick();
+                ((LoadMoreLayout) mLoadMoreView).showClick();
             } else {
-                ((LoadMoreView) mLoadMoreView).showLoading();
+                ((LoadMoreLayout) mLoadMoreView).showLoading();
             }
         }
     }

@@ -43,7 +43,7 @@ public class MultiItemTypeSwipeMenuAdapter<T> extends MultiItemTypeAdapter<T> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, @IntRange(from = 0) int viewType) {
         ItemDelegate itemDelegate = mItemDelegateManager.getItemViewDelegate(viewType);
         int layoutId = itemDelegate.getItemViewLayoutId();
-        SwipeMenuLayout swipeMenuLayout = (SwipeMenuLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.swipe_menu, parent, false);
+        SwipeMenuLayout swipeMenuLayout = (SwipeMenuLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_swipe_menu, parent, false);
         swipeMenuLayout.setRecyclerView(mRecyclerView);
         // 内容
         ViewGroup viewGroup = (ViewGroup) swipeMenuLayout.findViewById(R.id.swipe_menu_content);

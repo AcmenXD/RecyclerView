@@ -236,5 +236,4 @@ public final class GroupHeadLayout extends LinearLayout {
     protected void setGroupItemLevelNum(@IntRange(from = 0) int groupItemLevelNum) {
         this.groupItemLevelNum = groupItemLevelNum;
     }
-
 }

@@ -7,6 +7,9 @@ ext {
     minSdkVersion = 14
     targetSdkVersion = 26
 
+    // 列表库
+    recyclerview = "com.github.AcmenXD:RecyclerView:3.0"
+
     // 系统库
     system = [
             appcompatV7 : "com.android.support:appcompat-v7:26.1.0",

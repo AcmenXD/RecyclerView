@@ -24,12 +24,13 @@ RecyclerView功能集封装
 	}
 ```
 ```
-	 // Android系统提供的recyclerview-v7包
-	 compile 'com.android.support:recyclerview-v7:25.0.0'
-	 compile 'com.github.AcmenXD:RecyclerView:2.1'
+	 compile 'com.github.AcmenXD:RecyclerView:3.0'
 ```
 ### 功能
 ---
+####v3.0 优化
+- 整体优化及bug修复
+
 ####v2.1 优化
 - 支持自定义下拉刷新样式<a href="https://github.com/AcmenXD/SSwipeRefreshLayout">AcmenXD/SSwipeRefreshLayout</a>
 - 部分功能完善及bug修复
@@ -139,13 +140,13 @@ srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
  * 泛型:数据的类型
  * 参数:1.上下文对象  2.recyclerview实例  3.item布局  4.数据集List
  */
-SimpleAdapter mAdapter = new SimpleAdapter<Data>(this, rv, R.layout.activity_recycler_item, datas) {
+SimpleAdapter mAdapter = new SimpleAdapter<Data>(R.layout.activity_recycler_item, datas) {
     @Override
-    public void convert(ViewHolder viewHolder,Data item, int dataPosition) {
-	    // 刷新界面 viewHolder-控件集  item-数据  dataPosition-位置
+    public void convert(ViewHolder viewHolder,Data data, int dataPosition) {
+	    // 刷新界面 viewHolder-控件集  data-数据  dataPosition-位置
 	    // getView(rId)是viewHolder实现的方法,此方式获取控件无需再强转类型
 	    TextView tv = viewHolder.getView(R.id.activity_recycler_item_tv);
-            tv.setText(item.name);
+            tv.setText(data.name);
     }
 };
 ```
@@ -156,7 +157,7 @@ SimpleAdapter mAdapter = new SimpleAdapter<Data>(this, rv, R.layout.activity_rec
  * 泛型:数据的类型
  * 参数:1.上下文对象  2.recyclerview实例  3.数据集List
  */
-MultiItemTypeAdapter mAdapter = new MultiItemTypeAdapter<Data>(this, rv, datas);
+MultiItemTypeAdapter mAdapter = new MultiItemTypeAdapter<Data>(datas);
 // 添加一种item类型(有几种类型,添加几个)
 mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
     @Override
@@ -209,7 +210,7 @@ mAdapter.addItemViewDelegate(new ItemDelegate<Data>() {
  * 泛型:数据的类型
  * 参数:1.上下文对象  2.recyclerview实例  3.item布局  4.数据集List  5.侧滑菜单需要的监听器
  */
-SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(this, rv, R.layout.activity_recycler_item, datas, new OnSwipeMenuListener() {
+SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(R.layout.activity_recycler_item, datas, new OnSwipeMenuListener() {
     @Override
     public int[] getLeftMenuLayoutIds(int dataPosition) {
 	// item左侧菜单(如不需要,return null即可)
@@ -265,7 +266,7 @@ SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(this, rv, R.l
  * 参数:1.上下文对象  2.recyclerview实例  3.数据集List  4.侧滑菜单需要的监听器
  * 菜单创建和使用方式同上 : Adapter - 单类型+侧滑菜单的Item
  */
-mAdapter = new MultiItemTypeSwipeMenuAdapter(this, rv, datas, new OnSwipeMenuListener() {
+mAdapter = new MultiItemTypeSwipeMenuAdapter(datas, new OnSwipeMenuListener() {
     @Override
     public int[] getLeftMenuLayoutIds(int dataPosition) {
         return new int[0];

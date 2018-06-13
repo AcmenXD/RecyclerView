@@ -25,6 +25,6 @@ dependencies {
     /**
      * RecyclerView功能集封装
      */
-//    compile 'com.github.AcmenXD:RecyclerView:2.1'
+//    compile 'com.github.AcmenXD:RecyclerView:3.0'
     compile project(':recyclerview')
 }

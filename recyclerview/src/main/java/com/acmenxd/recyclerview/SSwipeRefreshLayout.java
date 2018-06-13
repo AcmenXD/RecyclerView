@@ -291,6 +291,44 @@ public class SSwipeRefreshLayout extends ViewGroup {
     }
 
     /**
+     * 滚动到顶部
+     */
+    public void scrollToTop() {
+        if (mTarget != null) {
+            mTarget.setScrollY(0);
+        }
+    }
+
+    /**
+     * 滚动到底部
+     */
+    public void scrollToBottom() {
+        if (mTarget != null) {
+            mTarget.setScrollY(mTarget.getMeasuredHeight());
+        }
+    }
+
+    /**
+     * 滚动到左边
+     */
+    public void scrollToStart() {
+        if (mTarget != null) {
+            scrollToTop();
+            mTarget.setScrollX(0);
+        }
+    }
+
+    /**
+     * 滚动到右边
+     */
+    public void scrollToEnd() {
+        if (mTarget != null) {
+            scrollToBottom();
+            mTarget.setScrollX(mTarget.getMeasuredWidth());
+        }
+    }
+
+    /**
      * 设置头部背景
      */
     public void setHeaderBackgroundResource(@DrawableRes int resId) {
@@ -488,7 +526,7 @@ public class SSwipeRefreshLayout extends ViewGroup {
     /**
      * 主要判断是否应该拦截子View的事件<br>
      * 如果拦截，则交给自己的OnTouchEvent处理<br>
-     * 否者，交给子View处理<br>
+     * 否则，交给子View处理<br>
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {

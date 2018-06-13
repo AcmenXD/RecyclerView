@@ -57,7 +57,13 @@ public abstract class SwipeMenuView extends LinearLayout {
      * 重置
      */
     public void resetMenu() {
+        // 移除所有子控件
         this.removeAllViews();
+        // 重置宽高
+        ViewGroup.LayoutParams params = this.getLayoutParams();
+        params.width = 0;
+        params.height = 0;
+        this.setLayoutParams(params);
     }
 
     /**

@@ -1,11 +1,8 @@
 package com.acmenxd.recyclerview.adapter;
 
-import android.content.Context;
 import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 
 import com.acmenxd.recyclerview.delegate.ItemDelegate;
 import com.acmenxd.recyclerview.delegate.ViewHolder;
@@ -20,20 +17,8 @@ import java.util.List;
  * @detail RecyclerView -> 公共Adapter,简化了RecyclerView.Adapter的实现
  */
 public abstract class SimpleAdapter<T> extends MultiItemTypeAdapter<T> {
-    protected Context mContext;
-    protected RecyclerView mRecyclerView;
-    protected int mLayoutId;
-    protected List<T> mDatas;
-    protected LayoutInflater mInflater;
-
-    public SimpleAdapter(@NonNull final Context context, @NonNull final RecyclerView recyclerView, @LayoutRes final int layoutId, @NonNull List<T> datas) {
-        super(context, recyclerView, datas);
-        mContext = context;
-        mRecyclerView = recyclerView;
-        mLayoutId = layoutId;
-        mDatas = datas;
-        mInflater = LayoutInflater.from(context);
-
+    public SimpleAdapter(@LayoutRes final int layoutId, @NonNull List<T> datas) {
+        super(datas);
         addItemViewDelegate(new ItemDelegate<T>() {
             @Override
             public int getItemViewLayoutId() {
@@ -52,6 +37,5 @@ public abstract class SimpleAdapter<T> extends MultiItemTypeAdapter<T> {
         });
     }
 
-    public abstract void convert(@NonNull ViewHolder viewHolder, @NonNull T item, @IntRange(from = 0) int dataPosition);
-
+    public abstract void convert(@NonNull ViewHolder viewHolder, @NonNull T data, @IntRange(from = 0) int dataPosition);
 }

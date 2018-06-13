@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
 
+def config = rootProject.ext
+
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion config.compileSdkVersion
+    buildToolsVersion config.buildToolsVersion
     defaultConfig {
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
         applicationId "com.acmenxd.recyclerview.demo"
-        minSdkVersion 14
-        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -20,19 +22,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testCompile 'junit:junit:4.12'
-    /**
-     * 系统库
-     */
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.0.0'
     /**
      * RecyclerView功能集封装
      */
-    compile 'com.github.AcmenXD:RecyclerView:2.1'
-//    compile project(':recyclerview')
+//    compile 'com.github.AcmenXD:RecyclerView:2.1'
+    compile project(':recyclerview')
 }

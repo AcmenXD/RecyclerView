@@ -30,11 +30,9 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     protected ItemDelegateManager mItemDelegateManager;
     private GroupListener mGroupListener; // 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
 
-    public MultiItemTypeAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull List<T> datas) {
-        mContext = context;
-        mRecyclerView = recyclerView;
-        setDatas(datas);
+    public MultiItemTypeAdapter(@NonNull List<T> datas) {
         mItemDelegateManager = new ItemDelegateManager();
+        setDatas(datas);
     }
 
     public List<T> getDatas() {
@@ -57,6 +55,32 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     public MultiItemTypeAdapter addItemViewDelegate(@IntRange(from = 0) int viewType, @NonNull ItemDelegate<T> pItemDelegate) {
         mItemDelegateManager.addDelegate(viewType, pItemDelegate);
         return this;
+    }
+
+    /**
+     * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
+     */
+    public void setGroupListener(@NonNull GroupListener pGroupListener) {
+        mGroupListener = pGroupListener;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.mRecyclerView = recyclerView;
+        this.mContext = recyclerView.getContext();
+        AdapterUtils.onAttachedToRecyclerView(null, recyclerView, new AdapterUtils.SpanSizeCallback() {
+            @Override
+            public int getSpanSize(GridLayoutManager layoutManager, GridLayoutManager.SpanSizeLookup oldLookup, int viewPosition) {
+                if (isGroupItemLayout(viewPosition)) {
+                    return layoutManager.getSpanCount();
+                }
+                if (oldLookup != null) {
+                    return oldLookup.getSpanSize(viewPosition);
+                }
+                return 1;
+            }
+        });
     }
 
     @Override
@@ -89,35 +113,11 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        AdapterUtils.onAttachedToRecyclerView(null, recyclerView, new AdapterUtils.SpanSizeCallback() {
-            @Override
-            public int getSpanSize(GridLayoutManager layoutManager, GridLayoutManager.SpanSizeLookup oldLookup, int viewPosition) {
-                if (isGroupItemLayout(viewPosition)) {
-                    return layoutManager.getSpanCount();
-                }
-                if (oldLookup != null) {
-                    return oldLookup.getSpanSize(viewPosition);
-                }
-                return 1;
-            }
-        });
-    }
-
-    @Override
     public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         if (isGroupItemLayout(holder.getLayoutPosition())) {
             AdapterUtils.setFullSpan(holder);
         }
-    }
-
-    /**
-     * 兼容Group分组功能,网格或瀑布流,必须设置,否则无法支持Group功能
-     */
-    public void setGroupListener(@NonNull GroupListener pGroupListener) {
-        mGroupListener = pGroupListener;
     }
 
     /**
@@ -133,5 +133,4 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
         }
         return false;
     }
-
 }

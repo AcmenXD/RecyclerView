@@ -5,6 +5,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.OrientationHelper;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -80,6 +81,11 @@ public final class GroupHeadLayout extends LinearLayout {
             }
         }
         mResetPositions.clear();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return true;
     }
 
     private void setPositionNum(@NonNull View child, int num) {
@@ -177,9 +183,7 @@ public final class GroupHeadLayout extends LinearLayout {
     protected void removeGroupHeadViewByLevel(@IntRange(from = 0) int level) {
         for (int i = level; i < groupItemLevelNum; i++) {
             if (mViews.containsKey(i)) {
-                View view = mViews.get(i);
-                mViews.remove(i);
-                this.removeView(view);
+                this.removeView(mViews.remove(i));
             }
         }
     }

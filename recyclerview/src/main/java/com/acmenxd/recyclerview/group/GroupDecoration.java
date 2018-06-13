@@ -57,7 +57,7 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull final RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         orientation = AdapterUtils.getOrientation(parent);
         isHORIZONTAL = orientation == OrientationHelper.HORIZONTAL;
@@ -82,6 +82,20 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
                     } else {
                         direction = 2;
                     }
+                }
+            });
+            mRecyclerView.getAdapter().registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    Arrays.fill(currPositions, -1);
+                    onDrawOver(null, mRecyclerView, state);
+                    mRecyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onDrawOver(null, mRecyclerView, state);
+                        }
+                    }, 50);
                 }
             });
         }
@@ -127,7 +141,9 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        super.onDrawOver(c, parent, state);
+        if (c != null) {
+            super.onDrawOver(c, parent, state);
+        }
         int lastPosition = -1;
         int firstPosition = findFirstVisiblePosition(parent);
         View currView = getCurrView(parent, mGroupHeadLayout.getAllWH(), 0);
@@ -166,16 +182,17 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
                 int groupHeadPosition = findUpGroupHeadPosition(firstVisiblePosition, lastPosition, level);
                 if (groupHeadPosition >= 0 && firstVisiblePosition >= groupHeadPosition) {
                     lastPosition = groupHeadPosition;
-                    boolean changeWH = false;
                     if (currPositions[level] != groupHeadPosition) {
                         currPositions[level] = groupHeadPosition;
-                        if (currPositions[level] == -1) {
-                            changeWH = true;
-                        }
                         int dataPosition = groupHeadPosition - WrapperUtils.getEmptyUpItemCount(parent);
                         if (!mGroupHeadLayout.isHave() || isGroupItemTypeMoreOne || groupItemLevelNum > 1) {
                             mGroupHeadLayout.removeGroupHeadViewByLevel(level);
-                            View groupHeadView = mListener.getGroupHeadView(mGroupHeadLayout, level, dataPosition);
+                            View groupHeadView = null;
+                            try {
+                                groupHeadView = mListener.getGroupHeadView(mGroupHeadLayout, level, dataPosition);
+                            } catch (Exception pE) {
+
+                            }
                             if (groupHeadView != null) {
                                 mGroupHeadLayout.addGroupHeadView(groupHeadView, level);
                                 if (direction == 2 || direction == 4) {
@@ -184,13 +201,16 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
                             }
                         }
                         if (mGroupHeadLayout.isHave()) {
-                            mListener.changeGroupHeadView(mGroupHeadLayout.getGroupHeadView(level), level, dataPosition);
-                            changeWH = true;
-                        }
-                        if (isAutoSetGroupHeadViewWidthHeightByGroupItemView && changeWH) {
-                            RecyclerView.ViewHolder changeViewHolder = parent.findViewHolderForAdapterPosition(groupHeadPosition);
-                            if (changeViewHolder != null && changeViewHolder.itemView != null) {
-                                setGroupHeadLayoutWH(changeViewHolder.itemView, level);
+                            try {
+                                mListener.changeGroupHeadView(mGroupHeadLayout.getGroupHeadView(level), level, dataPosition);
+                            } catch (Exception pE) {
+                                pE.printStackTrace();
+                            }
+                            if (isAutoSetGroupHeadViewWidthHeightByGroupItemView) {
+                                RecyclerView.ViewHolder changeViewHolder = parent.findViewHolderForAdapterPosition(groupHeadPosition);
+                                if (changeViewHolder != null && changeViewHolder.itemView != null) {
+                                    setGroupHeadLayoutWH(changeViewHolder.itemView, level);
+                                }
                             }
                         }
                     }
@@ -296,6 +316,27 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
             }
         }
         return firstVisiblePosition;
+    }
+
+    /**
+     * 查找当前最后一个显示的视图位置
+     */
+    private int findLastVisiblePosition(@NonNull RecyclerView parent) {
+        int lastVisiblePosition = 0;
+        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+        if (layoutManager instanceof GridLayoutManager) {
+            lastVisiblePosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
+        } else if (layoutManager instanceof LinearLayoutManager) {
+            lastVisiblePosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+            int[] mInto = new int[((StaggeredGridLayoutManager) layoutManager).getSpanCount()];
+            ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(mInto);
+            lastVisiblePosition = 0;
+            for (int pos : mInto) {
+                lastVisiblePosition = Math.max(pos, lastVisiblePosition);
+            }
+        }
+        return lastVisiblePosition;
     }
 
     /**

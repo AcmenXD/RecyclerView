@@ -1,0 +1,15 @@
+/**
+ * build.gradle Module统一配置
+ */
+ext {
+    compileSdkVersion = 26
+    buildToolsVersion = "27.0.3"
+    minSdkVersion = 14
+    targetSdkVersion = 26
+
+    // 系统库
+    system = [
+            appcompatV7 : "com.android.support:appcompat-v7:26.1.0",
+            recyclerview: "com.android.support:recyclerview-v7:26.1.0",
+    ]
+}

@@ -104,17 +104,17 @@ public final class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.Vie
             }
             if (mEmptyView != null) {
                 viewHolder = ViewHolder.createViewHolder(parent.getContext(), mEmptyView);
-            }
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View pView) {
-                    if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                        if (mOnEmptyListener != null) {
-                            mOnEmptyListener.onEmptyClick(mEmptyView);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View pView) {
+                        if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                            if (mOnEmptyListener != null) {
+                                mOnEmptyListener.onEmptyClick(mEmptyView);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
             return viewHolder;
         }
         return mInnerAdapter.onCreateViewHolder(parent, viewType);

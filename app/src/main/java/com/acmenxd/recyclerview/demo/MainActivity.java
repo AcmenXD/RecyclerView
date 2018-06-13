@@ -2,6 +2,7 @@ package com.acmenxd.recyclerview.demo;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private MultiItemTypeAdapter mAdapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@NonNull Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("RecyclerView功能集封装");
         setContentView(R.layout.activity_main);
@@ -179,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
         rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener));
         //设置分隔线
         rv.addItemDecoration(new LinearLayoutDecoration(this));
-//        rv.addItemDecoration(new GridLayoutDecoration(this));
-//        rv.addItemDecoration(new StaggeredGridLayoutDecoration(this));
+        //        rv.addItemDecoration(new GridLayoutDecoration(this));
+        //        rv.addItemDecoration(new StaggeredGridLayoutDecoration(this));
         //设置增加或删除条目的动画
         rv.setItemAnimator(new DefaultItemAnimator());
         /**
@@ -250,15 +251,15 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
         // 设置Adapter
-        mAdapter = new SimpleAdapter(this, rv, R.layout.activity_recycler_item, datas) {
+        mAdapter = new SimpleAdapter(R.layout.activity_recycler_item, datas) {
             @Override
-            public void convert(ViewHolder viewHolder, Object item, int dataPosition) {
+            public void convert(ViewHolder viewHolder, Object data, int dataPosition) {
             }
         };
         // 多item类型Adapter
-        mAdapter = new MultiItemTypeAdapter(this, rv, datas);
+        mAdapter = new MultiItemTypeAdapter(datas);
         // 多item类型&侧滑菜单 Adapter
-        mAdapter = new MultiItemTypeSwipeMenuAdapter(this, rv, datas, new OnSwipeMenuListener() {
+        mAdapter = new MultiItemTypeSwipeMenuAdapter(datas, new OnSwipeMenuListener() {
             @Override
             public int[] getLeftMenuLayoutIds(int dataPosition) {
                 if (dataPosition == 3) {
@@ -276,12 +277,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public boolean onMenuItemClick(int dataPosition, int menuItemId, int direction) {
+            public boolean onMenuItemClick(int dataPosition, int menuItemLayoutId, int direction) {
                 String dirStr = "左边菜单";
                 if (direction == SwipeMenuView.RIGHT_DIRECTION) {
                     dirStr = "右边菜单";
                 }
-                switch (menuItemId) {
+                switch (menuItemLayoutId) {
                     case R.id.menu_1:
                         showToast("position:" + dataPosition + dirStr + "的第一个menu");
                         break;

@@ -113,10 +113,13 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        if (isGroupItemLayout(holder.getLayoutPosition())) {
-            AdapterUtils.setFullSpan(holder);
+    public void onViewAttachedToWindow(@NonNull ViewHolder viewHolder) {
+        super.onViewAttachedToWindow(viewHolder);
+        int viewPosition = viewHolder.getLayoutPosition();
+        if (viewPosition >= 0) {
+            if (isGroupItemLayout(viewPosition)) {
+                AdapterUtils.setFullSpan(viewHolder);
+            }
         }
     }
 

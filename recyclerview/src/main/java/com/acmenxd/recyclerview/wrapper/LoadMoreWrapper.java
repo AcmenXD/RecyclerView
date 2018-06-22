@@ -191,8 +191,11 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
         mInnerAdapter.onViewAttachedToWindow(viewHolder);
-        if (isShowLoadMore(viewHolder.getLayoutPosition())) {
-            AdapterUtils.setFullSpan(viewHolder);
+        int viewPosition = viewHolder.getLayoutPosition();
+        if (viewPosition >= 0) {
+            if (isShowLoadMore(viewPosition)) {
+                AdapterUtils.setFullSpan(viewHolder);
+            }
         }
     }
 

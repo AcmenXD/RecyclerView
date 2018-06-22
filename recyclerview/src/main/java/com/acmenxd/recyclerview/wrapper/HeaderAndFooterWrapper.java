@@ -145,8 +145,10 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
     public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
         mInnerAdapter.onViewAttachedToWindow(viewHolder);
         int viewPosition = viewHolder.getLayoutPosition();
-        if (isHeaderViewPos(viewPosition) || isFooterViewPos(viewPosition)) {
-            AdapterUtils.setFullSpan(viewHolder);
+        if (viewPosition >= 0) {
+            if (isHeaderViewPos(viewPosition) || isFooterViewPos(viewPosition)) {
+                AdapterUtils.setFullSpan(viewHolder);
+            }
         }
     }
 }

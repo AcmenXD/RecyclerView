@@ -148,9 +148,11 @@ public final class EmptyWrapper<T> extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
         mInnerAdapter.onViewAttachedToWindow(viewHolder);
-        if (isEmptyView(viewHolder.getLayoutPosition())) {
-            AdapterUtils.setFullSpan(viewHolder);
+        int viewPosition = viewHolder.getLayoutPosition();
+        if (viewPosition >= 0) {
+            if (isEmptyView(viewPosition)) {
+                AdapterUtils.setFullSpan(viewHolder);
+            }
         }
     }
-
 }

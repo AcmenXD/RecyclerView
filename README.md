@@ -24,10 +24,13 @@ RecyclerView功能集封装
 	}
 ```
 ```
-	 compile 'com.github.AcmenXD:RecyclerView:3.0'
+	 compile 'com.github.AcmenXD:RecyclerView:3.1'
 ```
 ### 功能
 ---
+####v3.1 优化
+- 修复 viewPosition=-1 导致的崩溃问题
+
 ####v3.0 优化
 - 整体优化及bug修复
 

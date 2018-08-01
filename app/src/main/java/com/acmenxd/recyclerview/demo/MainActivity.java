@@ -28,13 +28,13 @@ import com.acmenxd.recyclerview.delegate.ViewHolder;
 import com.acmenxd.recyclerview.group.GroupDecoration;
 import com.acmenxd.recyclerview.group.GroupHeadLayout;
 import com.acmenxd.recyclerview.group.GroupListener;
-import com.acmenxd.recyclerview.listener.AddItemListener;
 import com.acmenxd.recyclerview.listener.ItemCallback;
 import com.acmenxd.recyclerview.listener.ItemDragCallback;
 import com.acmenxd.recyclerview.listener.ItemSwipeCallback;
 import com.acmenxd.recyclerview.listener.OnEmptyListener;
 import com.acmenxd.recyclerview.listener.OnLoadMoreListener;
 import com.acmenxd.recyclerview.listener.OnSwipeMenuListener;
+import com.acmenxd.recyclerview.listener.RecyclerItemListener;
 import com.acmenxd.recyclerview.swipemenu.SwipeMenuView;
 import com.acmenxd.recyclerview.wrapper.EmptyWrapper;
 import com.acmenxd.recyclerview.wrapper.HeaderAndFooterWrapper;
@@ -187,69 +187,69 @@ public class MainActivity extends AppCompatActivity {
         /**
          * 设置item监听 -> 单击&长按&滑动删除&拖拽变换
          */
-        new AddItemListener(rv,
-                new ItemCallback() {
-                    @Override
-                    public void onClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-                        showToast("item:" + dataPosition);
-                    }
+        RecyclerItemListener itemListener = new RecyclerItemListener(rv);
+        itemListener.setItemCallback(new ItemCallback() {
+            @Override
+            public void onClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+                showToast("item:" + dataPosition);
+            }
 
-                    @Override
-                    public void onLongClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-                        showToast("longClick:" + dataPosition);
-                    }
-                },
-                new ItemSwipeCallback() {
-                    @Override
-                    public boolean onDeleteData(RecyclerView.ViewHolder viewHolder, int dataPosition, int viewPosition) {
-                        datas.remove(dataPosition);
-                        return true;
-                    }
+            @Override
+            public void onLongClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+                showToast("longClick:" + dataPosition);
+            }
+        });
+        itemListener.setItemSwipeCallback(new ItemSwipeCallback() {
+            @Override
+            public boolean onDeleteData(RecyclerView.ViewHolder viewHolder, int dataPosition, int viewPosition) {
+                datas.remove(dataPosition);
+                return true;
+            }
 
-                    @Override
-                    public boolean onDeleteCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-                        if (dataPosition < 5) {
-                            return false;
-                        }
-                        return super.onDeleteCheck(viewHolder, dataPosition);
-                    }
-                },
-                new ItemDragCallback() {
-                    @Override
-                    public boolean onTransformData(RecyclerView.ViewHolder fromViewHolder, RecyclerView.ViewHolder toViewHolder, int fromDataPosition, int toDataPosition, int fromViewPosition, int toViewPosition) {
-                        datas.add(toDataPosition, datas.remove(fromDataPosition));
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onTransformCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-                        if (dataPosition < 2) {
-                            return false;
-                        }
-                        return super.onTransformCheck(viewHolder, dataPosition);
-                    }
-
-                    @Override
-                    public boolean onTransformToCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
-                        if (dataPosition < 2) {
-                            return false;
-                        }
-                        return super.onTransformToCheck(viewHolder, dataPosition);
-                    }
-
-                    @Override
-                    public void onSelectedStart(RecyclerView.ViewHolder viewHolder) {
-                        super.onSelectedStart(viewHolder);
-                        viewHolder.itemView.setBackgroundColor(Color.LTGRAY);
-                    }
-
-                    @Override
-                    public void onSelectedEnd(RecyclerView.ViewHolder viewHolder) {
-                        super.onSelectedEnd(viewHolder);
-                        viewHolder.itemView.setBackgroundResource(0);
-                    }
+            @Override
+            public boolean onDeleteCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+                if (dataPosition < 5) {
+                    return false;
                 }
-        );
+                return super.onDeleteCheck(viewHolder, dataPosition);
+            }
+        });
+        itemListener.setItemDragCallback(new ItemDragCallback() {
+            @Override
+            public boolean onTransformData(RecyclerView.ViewHolder fromViewHolder, RecyclerView.ViewHolder toViewHolder, int fromDataPosition, int toDataPosition, int fromViewPosition, int toViewPosition) {
+                datas.add(toDataPosition, datas.remove(fromDataPosition));
+                return true;
+            }
+
+            @Override
+            public boolean onTransformCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+                if (dataPosition < 2) {
+                    return false;
+                }
+                return super.onTransformCheck(viewHolder, dataPosition);
+            }
+
+            @Override
+            public boolean onTransformToCheck(RecyclerView.ViewHolder viewHolder, int dataPosition) {
+                if (dataPosition < 2) {
+                    return false;
+                }
+                return super.onTransformToCheck(viewHolder, dataPosition);
+            }
+
+            @Override
+            public void onSelectedStart(RecyclerView.ViewHolder viewHolder) {
+                super.onSelectedStart(viewHolder);
+                viewHolder.itemView.setBackgroundColor(Color.LTGRAY);
+            }
+
+            @Override
+            public void onSelectedEnd(RecyclerView.ViewHolder viewHolder) {
+                super.onSelectedEnd(viewHolder);
+                viewHolder.itemView.setBackgroundResource(0);
+            }
+        });
+
         // 设置Adapter
         mAdapter = new SimpleAdapter(R.layout.activity_recycler_item, datas) {
             @Override

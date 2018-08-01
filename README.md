@@ -24,10 +24,13 @@ RecyclerView功能集封装
 	}
 ```
 ```
-	 compile 'com.github.AcmenXD:RecyclerView:3.1'
+	 compile 'com.github.AcmenXD:RecyclerView:3.2'
 ```
 ### 功能
 ---
+####v3.2 优化
+- 优化 事件监听 逻辑
+
 ####v3.1 优化
 - 修复 viewPosition=-1 导致的崩溃问题
 
@@ -357,11 +360,11 @@ mLoadMoreWarpper.setRefreshBefore(2);
 ### 事件监听器(单击&长按 & 滑动删除 & 拖拽变换)
 ```java
 /*
- * 需创建AddItemListener统一管理各个监听器,避免出现各事件冲突
- * 如不需要实现的功能,监听器可以传null
- * 参数:1.recyclerview实例  2.单击&长按 监听  3.滑动删除 监听  4.拖拽变换 监听
+ * 需创建RecyclerItemListener统一管理各个监听器
  */
-new AddItemListener(rv, new ItemCallback() {
+RecyclerItemListener itemListener = new RecyclerItemListener(rv);
+// 单击&长按 监听
+itemListener.setItemCallback(new ItemCallback() {
     @Override
     public void onClick(RecyclerView.ViewHolder viewHolder, int dataPosition) {
 	// 单击回调
@@ -372,7 +375,9 @@ new AddItemListener(rv, new ItemCallback() {
 	//长按回调
         ToastUtils.show("longClick:" + dataPosition);
     }
-}, new ItemSwipeCallback() {
+});
+// 滑动删除 监听
+itemListener.setItemSwipeCallback(new ItemSwipeCallback() {
     @Override
     public boolean onDeleteData(RecyclerView.ViewHolder viewHolder, int dataPosition, int viewPosition) {
 	// 滑动删除回调,需手动处理数据
@@ -388,7 +393,9 @@ new AddItemListener(rv, new ItemCallback() {
         }
         return super.onDeleteCheck(viewHolder, dataPosition);
     }
-}, new ItemDragCallback() {
+});
+// 拖拽变换 监听
+ itemListener.setItemDragCallback(new ItemDragCallback() {
     @Override
     public boolean onTransformData(RecyclerView.ViewHolder fromViewHolder, RecyclerView.ViewHolder toViewHolder, int fromDataPosition, int toDataPosition, int fromViewPosition, int toViewPosition) {
 	// 变换回调,需手动处理数据(变换数据位置)

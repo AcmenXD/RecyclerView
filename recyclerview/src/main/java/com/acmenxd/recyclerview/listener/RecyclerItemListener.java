@@ -28,65 +28,88 @@ import com.acmenxd.recyclerview.wrapper.WrapperUtils;
  * @date 2017/2/20 11:54
  * @detail RecyclerView -> 各种事件回调
  */
-public final class AddItemListener {
+public final class RecyclerItemListener {
+    private RecyclerView mRecyclerView;
+    private OnItemTouchListenerCallback mOnItemTouchListenerCallback;
+    private ItemTouchHelperCallback mItemTouchHelperCallback;
+    private ItemCallback mItemCallback;//单击 & 长按 事件
+    private ItemSwipeCallback mSwipeCallback;//滑动删除
+    private ItemDragCallback mDragCallback;//拖拽变换
+
+    public RecyclerItemListener(@NonNull RecyclerView pRecyclerView) {
+        mRecyclerView = pRecyclerView;
+    }
+
     /**
      * 设置RecyclerView支持 单击 & 长按 事件
      *
-     * @param pRecyclerView recyclerView实例
      * @param pItemCallback 单击 & 长按回调函数
      */
-    public AddItemListener(@NonNull RecyclerView pRecyclerView, @NonNull ItemCallback pItemCallback) {
-        if (pItemCallback != null) {
-            pRecyclerView.addOnItemTouchListener(new OnItemTouchListenerCallback(pRecyclerView, pItemCallback));
+    public void setItemCallback(@NonNull ItemCallback pItemCallback) {
+        mItemCallback = pItemCallback;
+        if (mOnItemTouchListenerCallback == null) {
+            mOnItemTouchListenerCallback = new OnItemTouchListenerCallback();
+            mRecyclerView.addOnItemTouchListener(mOnItemTouchListenerCallback);
         }
     }
 
     /**
      * 设置RecyclerView支持 滑动删除
      *
-     * @param pRecyclerView  recyclerView实例
      * @param pSwipeCallback 滑动删除 回调函数
      */
-    public AddItemListener(@NonNull RecyclerView pRecyclerView, @NonNull ItemSwipeCallback pSwipeCallback) {
-        if (pSwipeCallback != null) {
-            createCallback(pRecyclerView, pSwipeCallback.getSwipeFlags(), 0, pSwipeCallback, null, null);
+    public void setItemSwipeCallback(@NonNull ItemSwipeCallback pSwipeCallback) {
+        mSwipeCallback = pSwipeCallback;
+        if (mItemTouchHelperCallback == null) {
+            mItemTouchHelperCallback = new ItemTouchHelperCallback();
+            new ItemTouchHelper(mItemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
         }
+        mItemTouchHelperCallback.setSwipeFlags(getSwipeFlags(pSwipeCallback.getSwipeFlags()));
     }
 
     /**
      * 设置RecyclerView支持 拖拽变换位置
      *
-     * @param pRecyclerView recyclerView实例
      * @param pDragCallback 拖拽变换 回调函数
      */
-    public AddItemListener(@NonNull RecyclerView pRecyclerView, @NonNull ItemDragCallback pDragCallback) {
-        if (pDragCallback != null) {
-            createCallback(pRecyclerView, 0, pDragCallback.getDragFlags(), null, pDragCallback, null);
+    public void setItemDragCallback(@NonNull ItemDragCallback pDragCallback) {
+        mDragCallback = pDragCallback;
+        if (mItemTouchHelperCallback == null) {
+            mItemTouchHelperCallback = new ItemTouchHelperCallback();
+            new ItemTouchHelper(mItemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
         }
+        mItemTouchHelperCallback.setDragFlags(getDragFlags(pDragCallback.getDragFlags()));
     }
 
-    /**
-     * 设置 单击&长按 & 滑动删除 & 拖拽变换
-     * * 对应Callback设置为null,表示不支持此回调
-     *
-     * @param pRecyclerView  recyclerView实例
-     * @param pItemCallback  单击 & 长按回调函数
-     * @param pSwipeCallback 滑动删除 回调函数
-     * @param pDragCallback  拖拽变换 回调函数
-     */
-    public AddItemListener(@NonNull RecyclerView pRecyclerView, ItemCallback pItemCallback, ItemSwipeCallback pSwipeCallback, ItemDragCallback pDragCallback) {
-        int swipeFlags = 0;
-        int dragFlags = 0;
-        if (pSwipeCallback != null) {
-            swipeFlags = pSwipeCallback.getSwipeFlags();
+    private int getSwipeFlags(int pSwipeFlags) {
+        int orientation = AdapterUtils.getOrientation(mRecyclerView);
+        if (pSwipeFlags == 0) {
+            if (orientation == OrientationHelper.VERTICAL) {
+                pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
+            } else {
+                pSwipeFlags = ItemSwipeCallback.UP_Swipe | ItemSwipeCallback.DOWN_Swipe;
+            }
         }
-        if (pDragCallback != null) {
-            dragFlags = pDragCallback.getDragFlags();
+        return pSwipeFlags;
+    }
+
+    private int getDragFlags(int pDragFlags) {
+        int orientation = AdapterUtils.getOrientation(mRecyclerView);
+        if (pDragFlags == 0) {
+            RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+            if (layoutManager instanceof StaggeredGridLayoutManager) {
+                pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag | ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
+            } else if (layoutManager instanceof GridLayoutManager) {
+                pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag | ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
+            } else if (layoutManager instanceof LinearLayoutManager) {
+                if (orientation == OrientationHelper.VERTICAL) {
+                    pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag;
+                } else {
+                    pDragFlags = ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
+                }
+            }
         }
-        createCallback(pRecyclerView, swipeFlags, dragFlags, pSwipeCallback, pDragCallback, pItemCallback);
-        if (pItemCallback != null) {
-            pRecyclerView.addOnItemTouchListener(new OnItemTouchListenerCallback(pRecyclerView, pItemCallback));
-        }
+        return pDragFlags;
     }
 
     /**
@@ -94,8 +117,6 @@ public final class AddItemListener {
      */
     private class OnItemTouchListenerCallback implements RecyclerView.OnItemTouchListener {
         private GestureDetectorCompat mGestureDetector;
-        private RecyclerView mRecyclerView;
-        private ItemCallback mItemCallBack;
 
         private boolean isDownInView(View view, int x, int y) {
             Rect rect = new Rect();
@@ -109,15 +130,13 @@ public final class AddItemListener {
             return rect.contains(x, y);
         }
 
-        public OnItemTouchListenerCallback(@NonNull RecyclerView pRecyclerView, @NonNull ItemCallback pItemCallBack) {
-            this.mRecyclerView = pRecyclerView;
-            this.mItemCallBack = pItemCallBack;
+        public OnItemTouchListenerCallback() {
             mGestureDetector = new GestureDetectorCompat(mRecyclerView.getContext(),
                     new GestureDetector.SimpleOnGestureListener() {
                         @Override
                         public boolean onSingleTapUp(MotionEvent e) {
                             if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                                if (mItemCallBack != null) {
+                                if (mItemCallback != null) {
                                     View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
                                     if (child != null) {
                                         boolean isMenuOpen = false;
@@ -133,7 +152,7 @@ public final class AddItemListener {
                                             int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
                                             boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
                                             if (!isWrapper) {
-                                                mItemCallBack.onClick(mRecyclerView.getChildViewHolder(child), dataPosition);
+                                                mItemCallback.onClick(mRecyclerView.getChildViewHolder(child), dataPosition);
                                             }
                                         }
                                     }
@@ -145,8 +164,8 @@ public final class AddItemListener {
                         @Override
                         public void onLongPress(MotionEvent e) {
                             if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                                if (mItemCallBack != null) {
-                                    if (mItemCallBack.isLongEnabled()) {
+                                if (mItemCallback != null) {
+                                    if (mItemCallback.isLongEnabled()) {
                                         View child = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
                                         if (child != null) {
                                             boolean isMenuOpen = false;
@@ -158,12 +177,12 @@ public final class AddItemListener {
                                                 int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
                                                 boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
                                                 if (!isWrapper) {
-                                                    mItemCallBack.onLongClick(mRecyclerView.getChildViewHolder(child), dataPosition);
+                                                    mItemCallback.onLongClick(mRecyclerView.getChildViewHolder(child), dataPosition);
                                                 }
                                             }
                                         }
                                     } else {
-                                        mItemCallBack.setLongEnabled(true);
+                                        mItemCallback.setLongEnabled(true);
                                     }
                                 }
                             }
@@ -189,61 +208,19 @@ public final class AddItemListener {
     }
 
     /**
-     * 设置RecyclerView支持 滑动删除 & 拖拽变换位置
-     *
-     * @param pRecyclerView  recyclerView实例
-     * @param pSwipeFlags    滑动删除方向(可设置多个方向)
-     * @param pDragFlags     拖拽变换方向(可设置多个方向)
-     * @param pSwipeCallBack 滑动删除的回调函数,null表示屏蔽此功能
-     * @param pDragCallBack  拖拽变换的回调函数,null表示屏蔽此功能
+     * item 滑动删除 & 拖拽变换 Touch类
      */
-    private void createCallback(@NonNull RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags, ItemSwipeCallback pSwipeCallBack, ItemDragCallback pDragCallBack, ItemCallback pItemCallback) {
-        int[] result = getSwipeAndDrag(pRecyclerView, pSwipeFlags, pDragFlags);
-        new ItemTouchHelper(new ItemTouchHelperCallback(pRecyclerView, result[0], result[1], pSwipeCallBack, pDragCallBack, pItemCallback)).attachToRecyclerView(pRecyclerView);
-    }
-
-    private int[] getSwipeAndDrag(@NonNull RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags) {
-        int orientation = AdapterUtils.getOrientation(pRecyclerView);
-        if (pSwipeFlags == 0) {
-            if (orientation == OrientationHelper.VERTICAL) {
-                pSwipeFlags = ItemSwipeCallback.LEFT_Swipe | ItemSwipeCallback.RIGHT_Swipe;
-            } else {
-                pSwipeFlags = ItemSwipeCallback.UP_Swipe | ItemSwipeCallback.DOWN_Swipe;
-            }
-        }
-        if (pDragFlags == 0) {
-            RecyclerView.LayoutManager layoutManager = pRecyclerView.getLayoutManager();
-            if (layoutManager instanceof StaggeredGridLayoutManager) {
-                pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag | ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
-            } else if (layoutManager instanceof GridLayoutManager) {
-                pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag | ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
-            } else if (layoutManager instanceof LinearLayoutManager) {
-                if (orientation == OrientationHelper.VERTICAL) {
-                    pDragFlags = ItemDragCallback.UP_Drag | ItemDragCallback.DOWN_Drag;
-                } else {
-                    pDragFlags = ItemDragCallback.LEFT_Drag | ItemDragCallback.RIGHT_Drag;
-                }
-            }
-        }
-        return new int[]{pSwipeFlags, pDragFlags};
-    }
-
     private class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
-        private RecyclerView mRecyclerView;
-        private ItemSwipeCallback mSwipeCallBack;
-        private ItemDragCallback mDragCallBack;
-        private ItemCallback mItemCallback;
         private int mSwipeFlags;
         private int mDragFlags;
         private boolean isSelectedStart = false; // 是否进入拖拽选中状态
 
-        public ItemTouchHelperCallback(@NonNull RecyclerView pRecyclerView, int pSwipeFlags, int pDragFlags, ItemSwipeCallback pSwipeCallBack, ItemDragCallback pDragCallBack, ItemCallback pItemCallback) {
-            this.mRecyclerView = pRecyclerView;
-            this.mSwipeCallBack = pSwipeCallBack;
-            this.mDragCallBack = pDragCallBack;
-            this.mItemCallback = pItemCallback;
-            this.mSwipeFlags = pSwipeFlags;
-            this.mDragFlags = pDragFlags;
+        public void setSwipeFlags(int pSwipeFlags) {
+            mSwipeFlags = pSwipeFlags;
+        }
+
+        public void setDragFlags(int pDragFlags) {
+            mDragFlags = pDragFlags;
         }
 
         @Override
@@ -259,15 +236,15 @@ public final class AddItemListener {
                     if (viewPosition >= 0) {
                         int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
                         boolean isWrapper = WrapperUtils.isItemWrapper(mRecyclerView, viewPosition);
-                        if (mDragCallBack != null) {
-                            if (mDragCallBack.onTransformCheck(viewHolder, dataPosition)) {
+                        if (mDragCallback != null) {
+                            if (mDragCallback.onTransformCheck(viewHolder, dataPosition)) {
                                 if (!isWrapper) {
                                     dragFlags = mDragFlags;
                                 }
                             }
                         }
-                        if (mSwipeCallBack != null) {
-                            if (mSwipeCallBack.onDeleteCheck(viewHolder, dataPosition)) {
+                        if (mSwipeCallback != null) {
+                            if (mSwipeCallback.onDeleteCheck(viewHolder, dataPosition)) {
                                 if (!isWrapper) {
                                     swipeFlags = mSwipeFlags;
                                 }
@@ -282,7 +259,7 @@ public final class AddItemListener {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                if (mDragCallBack != null) {
+                if (mDragCallback != null) {
                     int fromViewPosition = viewHolder.getAdapterPosition();
                     int toViewPosition = target.getAdapterPosition();
                     if (fromViewPosition >= 0 && toViewPosition >= 0) {
@@ -291,14 +268,14 @@ public final class AddItemListener {
                         int toDataPosition = toViewPosition - dp;
                         boolean isFromWrapper = WrapperUtils.isItemWrapper(mRecyclerView, fromViewPosition);
                         boolean isToWrapper = WrapperUtils.isItemWrapper(mRecyclerView, toViewPosition);
-                        if (mDragCallBack.onTransformCheck(viewHolder, fromDataPosition)
-                                && mDragCallBack.onTransformToCheck(viewHolder, toDataPosition)) {
+                        if (mDragCallback.onTransformCheck(viewHolder, fromDataPosition)
+                                && mDragCallback.onTransformToCheck(viewHolder, toDataPosition)) {
                             if (!isFromWrapper && !isToWrapper) {
                                 View child = viewHolder.itemView;
                                 if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isMenuOpen()) {
                                     ((SwipeMenuLayout) child).smoothCloseMenu();
                                 }
-                                if (mDragCallBack.onTransformData(viewHolder, target, fromDataPosition, toDataPosition, fromViewPosition, toViewPosition)) {
+                                if (mDragCallback.onTransformData(viewHolder, target, fromDataPosition, toDataPosition, fromViewPosition, toViewPosition)) {
                                     mRecyclerView.getAdapter().notifyItemMoved(fromViewPosition, toViewPosition);
                                 }
                             }
@@ -312,7 +289,7 @@ public final class AddItemListener {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                if (mSwipeCallBack != null) {
+                if (mSwipeCallback != null) {
                     int viewPosition = viewHolder.getAdapterPosition();
                     if (viewPosition >= 0) {
                         int dataPosition = viewPosition - WrapperUtils.getEmptyUpItemCount(mRecyclerView);
@@ -322,7 +299,7 @@ public final class AddItemListener {
                             if (child instanceof SwipeMenuLayout && ((SwipeMenuLayout) child).isMenuOpen()) {
                                 ((SwipeMenuLayout) child).smoothCloseMenu();
                             }
-                            if (mSwipeCallBack.onDeleteData(viewHolder, dataPosition, viewPosition)) {
+                            if (mSwipeCallback.onDeleteData(viewHolder, dataPosition, viewPosition)) {
                                 mRecyclerView.getAdapter().notifyItemRemoved(viewPosition);
                             }
                         }
@@ -356,8 +333,8 @@ public final class AddItemListener {
                     if (mItemCallback != null) {
                         mItemCallback.setLongEnabled(false);
                     }
-                    if (mDragCallBack != null) {
-                        mDragCallBack.onSelectedStart(viewHolder);
+                    if (mDragCallback != null) {
+                        mDragCallback.onSelectedStart(viewHolder);
                         isSelectedStart = true;
                     }
                     Log.v("AcmenXD", "item进入拖拽状态");
@@ -376,8 +353,9 @@ public final class AddItemListener {
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
             if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                if (mDragCallBack != null && isSelectedStart) {
-                    mDragCallBack.onSelectedEnd(viewHolder);
+                if (mDragCallback != null && isSelectedStart) {
+                    mDragCallback.onSelectedEnd(viewHolder);
+                    isSelectedStart = false;
                 }
             }
         }

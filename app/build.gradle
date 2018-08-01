@@ -22,6 +22,6 @@ android {
 }
 
 dependencies {
-    compile config.recyclerview
-//    compile project(':recyclerview')
+//    compile config.recyclerview
+    compile project(':recyclerview')
 }

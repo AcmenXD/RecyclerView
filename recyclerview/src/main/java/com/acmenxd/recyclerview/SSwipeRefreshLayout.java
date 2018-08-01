@@ -309,7 +309,7 @@ public class SSwipeRefreshLayout extends ViewGroup {
     }
 
     /**
-     * 滚动到左边
+     * 滚动到左边顶部
      */
     public void scrollToStart() {
         if (mTarget != null) {
@@ -319,7 +319,7 @@ public class SSwipeRefreshLayout extends ViewGroup {
     }
 
     /**
-     * 滚动到右边
+     * 滚动到右边底部
      */
     public void scrollToEnd() {
         if (mTarget != null) {

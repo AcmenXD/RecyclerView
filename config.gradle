@@ -8,7 +8,7 @@ ext {
     targetSdkVersion = 26
 
     // 列表库
-    recyclerview = "com.github.AcmenXD:RecyclerView:3.1"
+    recyclerview = "com.github.AcmenXD:RecyclerView:3.2"
 
     // 系统库
     system = [

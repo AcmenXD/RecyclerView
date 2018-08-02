@@ -272,7 +272,7 @@ SimpleSwipeMenuAdapter mAdapter = new SimpleSwipeMenuAdapter<Data>(R.layout.acti
  * 参数:1.上下文对象  2.recyclerview实例  3.数据集List  4.侧滑菜单需要的监听器
  * 菜单创建和使用方式同上 : Adapter - 单类型+侧滑菜单的Item
  */
-mAdapter = new MultiItemTypeSwipeMenuAdapter(datas, new OnSwipeMenuListener() {
+MultiItemTypeSwipeMenuAdapter mAdapter = new MultiItemTypeSwipeMenuAdapter(datas, new OnSwipeMenuListener() {
     @Override
     public int[] getLeftMenuLayoutIds(int dataPosition) {
         return new int[0];

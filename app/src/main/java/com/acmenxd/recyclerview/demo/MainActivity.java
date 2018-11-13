@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 changeGroupItemView(groupHeadView, groupLevel, dataPosition);
             }
         };
-        rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener));
+        rv.addItemDecoration(new GroupDecoration((GroupHeadLayout) findViewById(R.id.groupLayout), mGroupListener,true));
         //设置分隔线
         rv.addItemDecoration(new LinearLayoutDecoration(this));
         //        rv.addItemDecoration(new GridLayoutDecoration(this));

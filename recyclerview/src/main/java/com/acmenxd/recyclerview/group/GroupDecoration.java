@@ -35,6 +35,7 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
     private int direction = 1; // 1:向上  2:向下  3:向左   4:向右
     private int orientation = OrientationHelper.VERTICAL; // 默认为垂直布局
     private boolean isHORIZONTAL = false; // 是否是水平布局
+    private boolean isSuspension = false; // 是否悬浮Group
 
     private int[] currPositions = null; // 记录当前各层级显示Head位置
     private int groupItemLevelNum = 1; // groupItem的层级数量
@@ -43,8 +44,13 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
     private boolean isAutoSetGroupHeadViewWidthHeightByGroupItemView = false; // 是否自动配置Head的宽高,根据当前GroupItem
 
     public GroupDecoration(@NonNull GroupHeadLayout pGroupHeadLayout, @NonNull GroupListener pListener) {
+        this(pGroupHeadLayout, pListener, false);
+    }
+
+    public GroupDecoration(@NonNull GroupHeadLayout pGroupHeadLayout, @NonNull GroupListener pListener, @NonNull boolean pIsSuspension) {
         mGroupHeadLayout = pGroupHeadLayout;
         mListener = pListener;
+        isSuspension = pIsSuspension;
         checkGroups = new HashMap<>();
         groupItemLevelNum = pListener.getGroupItemLevelNum();
         isGroupItemTypeMoreOne = pListener.isGroupItemTypeMoreOne();
@@ -143,6 +149,9 @@ public final class GroupDecoration extends RecyclerView.ItemDecoration {
     public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         if (c != null) {
             super.onDrawOver(c, parent, state);
+        }
+        if (!isSuspension) {
+            return;
         }
         int lastPosition = -1;
         int firstPosition = findFirstVisiblePosition(parent);

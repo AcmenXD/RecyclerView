@@ -24,10 +24,13 @@ RecyclerView功能集封装
 	}
 ```
 ```
-	 compile 'com.github.AcmenXD:RecyclerView:3.2'
+	 compile 'com.github.AcmenXD:RecyclerView:3.3'
 ```
 ### 功能
 ---
+####v3.3 新增
+- 新增分组能否悬浮的开关
+
 ####v3.2 优化
 - 优化 事件监听 逻辑
 
